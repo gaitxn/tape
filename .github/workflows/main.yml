@@ -1,0 +1,42 @@
+name: Auto Approve Markdown PRs
+
+on:
+  pull_request_target:
+    paths:
+      - '**.md'
+      - 'docs/**'
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 1. Generar token usando las credenciales de tu GitHub App
+      - name: Generate GitHub App Token
+        id: generate_token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      # 2. Verificar estrictamente que SOLO se hayan cambiado archivos Markdown
+      - name: Check if ONLY markdown files were changed
+        id: check_files
+        run: |
+          URL="https://github.com{{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files"
+          FILES=$(curl -s -H "Authorization: Bearer ${{ steps.generate_token.outputs.token }}" "$URL" | jq -r '.[].filename')
+          NON_MD_FILES=$(echo "$FILES" | grep -vE '\.md$' || true)
+          
+          if [ -n "$NON_MD_FILES" ]; then
+            echo "Se encontraron archivos de código u otros formatos. Cancelando aprobación."
+            exit 1
+          fi
+
+      # 3. Tu GitHub App aprueba el PR de forma válida saltando las restricciones de rama
+      - name: Approve Pull Request
+        if: success()
+        uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}

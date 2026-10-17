@@ -44,6 +44,7 @@ npm install
 cd ../frontend
 npm install
 ```
+
 ## Cómo Ejecutar el Proyecto
 Debes mantener dos terminales abiertas simultáneamente para correr el backend y el frontend:
 

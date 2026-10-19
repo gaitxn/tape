@@ -1,0 +1,36 @@
+<nav>
+    <ul class="menu">
+        <!-- Menú desplegable File -->
+        <li class="dropdown">
+            <a href="#" class="menu-link">File</a>
+            <ul class="submenu">
+                <li><button class="submenu-btn">Open</button></li>
+                <li><button class="submenu-btn">Export</button></li>
+            </ul>
+        </li>
+
+        <!-- Selector de Pestañas (Edit / View) -->
+        <li class="tab-group">
+            <button class="tab-btn" [class.active]="activeTab==='edit'" (click)="setTab('edit')" data-tab="edit">Edit</button>
+            <button class="tab-btn" [class.active]="activeTab==='view'" (click)="setTab('view')" data-tab="view">View</button>
+        </li>
+
+        <!-- Herramientas de la Pestaña "Edit" -->
+        @if (activeTab === 'edit') {
+            <li class="tab-content active">
+                <button class="action-btn primary">Build</button>
+            </li>
+        }        
+
+        <!-- Herramientas de la Pestaña "View" -->
+        @if (activeTab === 'view') {
+        <li class="tab-content active">
+                <div class="button-group">
+                    <button class="action-btn primary">Run</button>
+                    <button class="action-btn">Pause</button>
+                    <button class="action-btn">Stop</button>
+                </div>
+            </li>
+        }
+    </ul>
+</nav>

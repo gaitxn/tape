@@ -1,0 +1,159 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #0f172a;
+}
+
+/* Barra de navegación principal */
+nav {
+    background-color: #1e293b;
+    padding: 6px 16px;
+    border-bottom: 1px solid #334155;
+}
+
+.menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Dropdown "File" */
+.dropdown {
+    position: relative;
+}
+
+.menu-link {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    display: block;
+    transition: all 0.2s;
+}
+
+.menu-link:hover {
+    color: #f8fafc;
+    background-color: #334155;
+}
+
+.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    list-style: none;
+    border-radius: 6px;
+    padding: 4px;
+    margin-top: 4px;
+    min-width: 120px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+    display: none;
+    z-index: 20;
+}
+
+.dropdown:hover .submenu {
+    display: block;
+}
+
+.submenu-btn {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.submenu-btn:hover {
+    background-color: #334155;
+    color: #ffffff;
+}
+
+/* Estilos de Pestañas (Tab Group) */
+.tab-group {
+    display: flex;
+    background-color: #0f172a;
+    padding: 3px;
+    border-radius: 6px;
+    border: 1px solid #334155;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: #f8fafc;
+}
+
+.tab-btn.active {
+    background-color: #334155;
+    color: #38bdf8;
+}
+
+/* Contenido / Botones según Pestaña */
+.tab-content {
+    display: none; /* Se ocultan por defecto */
+}
+
+.tab-content.active {
+    display: flex; /* Muestra el contenido de la pestaña activa */
+    align-items: center;
+}
+
+/* Agrupación de botones para la pestaña View */
+.button-group {
+    display: flex;
+    gap: 2px;
+    background-color: #0f172a;
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid #334155;
+}
+
+/* Botones de acción generales */
+.action-btn {
+    background-color: #334155;
+    border: none;
+    color: #f8fafc;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+    background-color: #475569;
+}
+
+/* Botón destacado (Build) */
+.action-btn.primary {
+    background-color: #0284c7;
+}
+
+.action-btn.primary:hover {
+    background-color: #0369a1;
+}

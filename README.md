@@ -30,8 +30,8 @@ Para levantar el proyecto en tu entorno de desarrollo local, sigue estos pasos:
 
 * **1. Clonar el repositorio**
 ```Bash
-git clone [https://github.com/tu-usuario/tape-engine.git](https://github.com/tu-usuario/tape-engine.git)
-cd tape-project
+git clone https://github.com/gaitxn/tape.git
+cd tape
 ```
 * **2. Configurar el Backend (NestJS)**
 Bash

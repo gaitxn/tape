@@ -52,8 +52,8 @@ Debes mantener dos terminales abiertas simultáneamente para correr el backend y
 ```Bash
 cd backend
 npm run start:dev
-(La API REST correrá en http://localhost:3000)
 ```
+(La API REST correrá en http://localhost:3000)
 
 * **Terminal 2 (Frontend - Angular):**
 ```Bash

@@ -39,7 +39,7 @@ Bash
 cd backend
 npm install
 ```
-* **3. Configurar el Frontend (Angular)*
+* **3. Configurar el Frontend (Angular)**
 ```Bash
 cd ../frontend
 npm install
@@ -66,5 +66,5 @@ ng serve
 Proyecto desarrollado por: 
 * Daniel Gaitán (@gaitxn)
 * Daniel Vásquez (@ST4LK3RDE21)
-* Andrés Gutiérrez ()
-* Alejandro Velásquez ()
+* Andrés Gutiérrez (@AndresGbq)
+* Alejandro Velásquez (@Jhank-1)

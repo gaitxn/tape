@@ -34,7 +34,6 @@ git clone https://github.com/gaitxn/tape.git
 cd tape
 ```
 * **2. Configurar el Backend (NestJS)**
-Bash
 ```Bash
 cd backend
 npm install

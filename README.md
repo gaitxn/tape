@@ -34,12 +34,11 @@ git clone https://github.com/gaitxn/tape.git
 cd tape
 ```
 * **2. Configurar el Backend (NestJS)**
-Bash
 ```Bash
 cd backend
 npm install
 ```
-* **3. Configurar el Frontend (Angular)*
+* **3. Configurar el Frontend (Angular)**
 ```Bash
 cd ../frontend
 npm install
@@ -52,8 +51,8 @@ Debes mantener dos terminales abiertas simultáneamente para correr el backend y
 ```Bash
 cd backend
 npm run start:dev
-(La API REST correrá en http://localhost:3000)
 ```
+(La API REST correrá en http://localhost:3000)
 
 * **Terminal 2 (Frontend - Angular):**
 ```Bash
@@ -66,5 +65,5 @@ ng serve
 Proyecto desarrollado por: 
 * Daniel Gaitán (@gaitxn)
 * Daniel Vásquez (@ST4LK3RDE21)
-* Andrés Gutiérrez ()
-* Alejandro Velásquez ()
+* Andrés Gutiérrez (@AndresGbq)
+* Alejandro Velásquez (@Jhank-1)

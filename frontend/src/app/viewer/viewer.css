@@ -1,0 +1,100 @@
+/* Contenedor principal con scroll horizontal */
+.table-container {
+    width: 100%;
+    height: auto;
+    overflow-x: auto;
+    background-color: #0f172a;
+    padding: 8px;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #1e293b;
+}
+
+/* La tabla mantiene dimensiones estables */
+.scrollable-table {
+    border-collapse: separate;
+    border-spacing: 8px; /* Espaciado estético entre casillas */
+    table-layout: fixed;
+}
+
+/* Casillas cuadradas de tamaño fijo */
+.scrollable-table td {
+    width: 30px;  /* Ancho de la casilla */
+    height: 30px; /* Alto idéntico para garantizar la forma cuadrada */
+    
+    background-color: #1e293b;
+    color: #94a3b8;
+    text-align: center;
+    vertical-align: middle;
+    
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    
+    border: 1px solid #334155;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: all 0.25s ease-in-out;
+}
+
+/* Efecto hover */
+.scrollable-table td:hover {
+    border-color: #475569;
+    color: #f8fafc;
+}
+
+/* Estado 'activo' con iluminación (Glow) */
+.scrollable-table td.active {
+    background-color: #0284c7;
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.6), inset 0 0 5px rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+}
+
+.sticky-col {
+    position: sticky;
+    left: 0;
+    z-index: 2; /* Se mantiene por encima de las celdas al hacer scroll */
+    background-color: #0f172a; /* Obligatorio: evita que sea transparente */
+}
+
+.col-header {
+    color: #94a3b8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    height: 20px;
+    min-width: 50px;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    user-select: none;
+}
+
+/* Esquina superior izquierda (intersección fija) */
+.sticky-corner {
+    position: sticky;
+    left: 0;
+    z-index: 3; /* Por encima de todo en la esquina */
+    min-width: 45px;
+    height: 25px;
+    border: none;
+}
+
+.row-header {
+    width: 20px;
+    height: 25px;
+    color: #94a3b8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    user-select: none;
+}

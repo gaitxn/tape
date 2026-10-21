@@ -1,0 +1,45 @@
+.editor-container {
+    display: flex;
+    background-color: #1e1e1e;
+    border: 1px solid #334155;
+    overflow: hidden;
+    font-family: 'Consolas', Courier, monospace;
+    font-size: 14px;
+    height: 360px;
+    width: 100%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.line-numbers {
+    background-color: #252526;
+    color: #858585;
+    padding: 12px 6px;
+    text-align: right;
+    user-select: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 45px;
+    line-height: 1.5; /* IMPORTANTE: Debe coincidir con el textarea */
+}
+
+.line-numbers span {
+    display: block;
+}
+
+/* Área de texto principal */
+textarea {
+    flex: 1;
+    background-color: transparent;
+    color: #d4d4d4;
+    border: none;
+    padding: 12px;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.5; /* IMPORTANTE: Debe coincidir con los números */
+    white-space: pre;
+    overflow-y: auto;
+    tab-size: 4;
+}

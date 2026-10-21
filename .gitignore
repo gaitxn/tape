@@ -4,3 +4,4 @@ out-tsc/
 .env
 coverage/
 .angular/
+desktop.ini

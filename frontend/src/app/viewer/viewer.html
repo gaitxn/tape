@@ -1,14 +1,28 @@
 <div class="table-container">
     <table class="scrollable-table">
+        <thead>
+            <tr>
+                <!-- Esquina superior izquierda fija -->
+                <th class="sticky-corner"></th>
+                
+                <!-- Números del 1 a N sobre cada columna -->
+                @for (col of cols; track $index) {
+                    <th class="col-header">{{ $index + 1 }}</th>
+                }
+            </tr>
+        </thead>
         <tbody>
-            @for (row of grid; track $index) {
+            @for (rowLabel of rows; track rowLabel; let rIndex = $index) {
                 <tr>
-                    {{ this.letters[$index] }}
-                    @for (cell of row; track $index) {
+                    <!-- Columna de ABCD fijada a la izquierda -->
+                    <th class="sticky-col row-header">{{ rowLabel }}</th>
+                    
+                    <!-- Celdas interactivas de la cuadrícula -->
+                    @for (col of cols; track cIndex; let cIndex = $index) {
                         <td 
-                            [class.active]="cell.active" 
-                            (click)="cell.active = !cell.active">
-                            {{ cell.text }}
+                            [class.active]="isActive(rIndex, cIndex)" 
+                            (click)="toggleCell(rIndex, cIndex)">
+                            {{ rIndex }}:{{ cIndex }}
                         </td>
                     }
                 </tr>

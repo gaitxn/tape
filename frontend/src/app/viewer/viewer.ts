@@ -1,31 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'viewer',
-  imports: [],
   templateUrl: './viewer.html',
-  styleUrl: './viewer.css',
+  styleUrls: ['./viewer.css']
 })
 export class Viewer {
-  grid: { text: string; active: boolean }[][] = [];
-  letters: string[] = 'ABCDEFG'.split('');
+  // Filas fijas a la izquierda (A, B, C, D)
+  rows: string[] = ['A', 'B', 'C', 'D'];
+  
+  // Generamos un arreglo de 35 columnas (o N columnas) para numerar del 1 a N arriba
+  totalColumns: number = 35;
+  cols: number[] = Array.from({ length: this.totalColumns }, (_, i) => i);
 
-  ngOnInit() {
-    this.generateGrid(4, 35); // 4 filas, 35 columnas
+  // Sistema para manejar qué celdas están activas
+  activeCells = new Set<string>();
+
+  toggleCell(rowIndex: number, colIndex: number) {
+    const key = `${rowIndex}-${colIndex}`;
+    if (this.activeCells.has(key)) {
+      this.activeCells.delete(key);
+    } else {
+      this.activeCells.add(key);
+    }
   }
 
-  generateGrid(rows: number, cols: number) {    
-    for (let r = 0; r < rows; r++) {
-      const row: { text: string; active: boolean }[] = [];
-      for (let c = 0; c < cols; c++) {
-        const col= `${c}`;
-        row.push({
-          text: `${r}:${col}`,
-          active: false
-        });
-      }
-      this.grid.push(row);
-      this.letters.push();
-    }
+  isActive(rowIndex: number, colIndex: number): boolean {
+    return this.activeCells.has(`${rowIndex}-${colIndex}`);
   }
 }

@@ -6,23 +6,23 @@
                 <th class="sticky-corner"></th>
                 
                 <!-- Números del 1 a N sobre cada columna -->
-                @for (col of cols; track $index) {
+                @for (col of gridData[0]; track $index) {
                     <th class="col-header">{{ $index + 1 }}</th>
                 }
             </tr>
         </thead>
         <tbody>
-            @for (rowLabel of rows; track rowLabel; let rIndex = $index) {
+            @for (row of gridData; track $index; let rIndex = $index) {
                 <tr>
                     <!-- Columna de ABCD fijada a la izquierda -->
-                    <th class="sticky-col row-header">{{ rowLabel }}</th>
+                    <th class="sticky-col row-header">{{ rows[rIndex] }}</th>
                     
                     <!-- Celdas interactivas de la cuadrícula -->
-                    @for (col of cols; track cIndex; let cIndex = $index) {
+                    @for (cellValue of row; track $index; let cIndex = $index) {
                         <td 
                             [class.active]="isActive(rIndex, cIndex)" 
-                            (click)="toggleCell(rIndex, cIndex)">
-                            {{ rIndex }}:{{ cIndex }}
+                            (click)="   toggleCell(rIndex, cIndex);">
+                            {{ getData(rIndex, cIndex) }}
                         </td>
                     }
                 </tr>

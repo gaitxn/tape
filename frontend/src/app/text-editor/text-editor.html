@@ -1,17 +1,16 @@
 <div class="editor-container">
-    <!-- Columna de números de línea -->
-    <div class="line-numbers" #lineNumbersRef>
-        @for (line of lines; track $index) {
-            <span>{{ $index + 1 }}</span>
-        }
-    </div>
-
-    <textarea
-        #textareaRef
-        [(ngModel)]="codeContent"
-        (input)="onInput()"
-        (scroll)="onScroll()"
-        placeholder="Escribe tu código aquí..."
-        spellcheck="false"
-    ></textarea>
+  <div class="line-numbers" #lineNumbersRef>
+    @for (item of [].constructor(lines); track $index) {
+      <span>{{ $index + 1 }}</span>
+    }
+  </div>
+  <textarea
+    #textareaRef
+    [(ngModel)]="codeContent"
+    (scroll)="onScroll($event)"
+    (input)="onInput()"
+    (keydown)="onKeyDown($event)"
+    spellcheck="false"
+    placeholder="Escribe tu código..."
+  ></textarea>
 </div>

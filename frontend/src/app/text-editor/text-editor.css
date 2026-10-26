@@ -1,45 +1,63 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
 .editor-container {
     display: flex;
-    background-color: #1e1e1e;
-    border: 1px solid #334155;
-    overflow: hidden;
-    font-family: 'Consolas', Courier, monospace;
-    font-size: 14px;
-    height: 360px;
+    flex-direction: row;
     width: 100%;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    height: 100%;
+    background-color: #1e1e1e;
+    overflow: hidden;
+
+    --editor-font-size: 14px;
+    --editor-line-height: 1.5;
 }
 
 .line-numbers {
     background-color: #252526;
     color: #858585;
-    padding: 12px 6px;
+    /* El padding inferior se adapta automáticamente al tamaño real del visor */
+    padding: 12px 0 var(--dynamic-viewer-height, 100px) 0; 
     text-align: right;
     user-select: none;
-    overflow: hidden;
+    overflow-y: hidden; 
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    min-width: 45px;
-    line-height: 1.5; /* IMPORTANTE: Debe coincidir con el textarea */
+    min-width: 50px;
+    box-sizing: border-box;
+    font-family: 'Consolas', Courier, monospace;
+    font-size: var(--editor-font-size);
+    line-height: var(--editor-line-height);
+    border-right: 1px solid #2d3748;
+    flex-shrink: 0;
 }
 
 .line-numbers span {
     display: block;
+    padding-right: 8px;
+    height: calc(var(--editor-font-size) * var(--editor-line-height));
+    box-sizing: border-box;
 }
 
-/* Área de texto principal */
 textarea {
     flex: 1;
+    width: 100%;
+    height: 100%;
     background-color: transparent;
     color: #d4d4d4;
     border: none;
-    padding: 12px;
+    padding: 12px 12px; 
     resize: none;
     outline: none;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: 1.5; /* IMPORTANTE: Debe coincidir con los números */
+    font-family: 'Consolas', Courier, monospace;
+    font-size: var(--editor-font-size);
+    line-height: var(--editor-line-height);
     white-space: pre;
-    overflow-y: auto;
+    overflow-y: auto; 
+    overflow-x: auto;
     tab-size: 4;
+    box-sizing: border-box;
 }

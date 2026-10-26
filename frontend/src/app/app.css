@@ -1,0 +1,51 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #0f172a;
+    color: #f8fafc;
+    overflow: hidden; /* Evita scroll global del viewport */
+}
+
+app-header {
+    position: sticky;
+    top: 0;
+    height: auto;
+}
+
+viewer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+:host {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+.pantalla-completa {
+    display: grid;
+    grid-template-rows: auto 1fr auto; 
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #0f172a;
+}
+
+.editor-host-wrapper {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Utiliza la altura calculada dinámicamente restándola del total de la pantalla */
+    height: calc(100vh - var(--dynamic-viewer-height, 150px) - 12px);
+    height: calc(100dvh - var(--dynamic-viewer-height, 150px) - 12px);
+}

@@ -1,4 +1,3 @@
-import { identifierName } from '@angular/compiler';
 import { Component } from '@angular/core';
 
 @Component({
@@ -12,7 +11,6 @@ export class Viewer {
 
   // Generamos un arreglo de 35 columnas (o N columnas) para numerar del 1 a N arriba
   totalColumns: number = 35;
-  cols: number[] = Array.from({ length: this.totalColumns }, (_, i) => i);
   
   // Sistema para manejar qué celdas están activas
   activeCells = new Set<string>();

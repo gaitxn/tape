@@ -19,34 +19,23 @@ export class TextEditor implements AfterViewInit {
   @ViewChild('lineNumbersRef') lineNumbersRef!: ElementRef<HTMLDivElement>;
   @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
-  codeContent: string = '// Escribe tu código aquí...';
-  lineCount: number = 1; // Inicializado obligatoriamente como número entero
-
   ngAfterViewInit() {
-    this.updateLineCount();
+    this.updateLines();
   }
 
   onScroll(event: Event) {
-    const textarea = event.target as HTMLTextAreaElement;
-    if (this.lineNumbersRef) {
-      this.lineNumbersRef.nativeElement.scrollTop = textarea.scrollTop;
+    if (this.lineNumbersRef && this.textareaRef) {
+      this.lineNumbersRef.nativeElement.scrollTop = this.textareaRef.nativeElement.scrollTop;
     }
   }
 
   onInput() {
-    this.updateLineCount();
+    this.updateLines();
   }
 
   updateLines() {
     this.lines = this.codeContent.split('\n');
-    this.lineCount = Math.max(1, lines.length);
     this.api.code = this.codeContent;   // solo guarda, no envía
-  }
-
-  onScroll() {
-    if (this.lineNumbersRef && this.textareaRef) {
-      this.lineNumbersRef.nativeElement.scrollTop = this.textareaRef.nativeElement.scrollTop;
-    }
   }
 
   onKeyDown(event: KeyboardEvent) {

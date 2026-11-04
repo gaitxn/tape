@@ -9,7 +9,9 @@ export class LexerApi {
   code = '';
 
   tokenize(code: string) {
-    return this.http.post('http://localhost:3000/lexer/tokenize', { code });
+    const baseUrl = 'http://localhost:3000';
+    return this.http.post(`${baseUrl}/lexer/tokenize`, { code });
+
   }
 
   build() {

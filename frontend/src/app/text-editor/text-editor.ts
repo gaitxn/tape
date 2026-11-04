@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LexerApi } from '../lexer.service';
+import { CompilerApi } from '../compiler.service';
 
 @Component({
   selector: 'text-editor',
@@ -11,9 +11,9 @@ import { LexerApi } from '../lexer.service';
   styleUrls: ['./text-editor.css']
 })
 export class TextEditor implements AfterViewInit {
-  private api = inject(LexerApi);
+  private api = inject(CompilerApi);
 
-  codeContent: string = 'WRITE(A, 0, 16)(A, 1, 12);\n// Escribe más líneas aquí...';
+  codeContent: string = 'WRITE(12);>>;\nWRITE(4);\nEMIT(0, READ());\n// Escribe más líneas aquí...';
 
   lines: string[] = this.codeContent.split('\n');
   @ViewChild('lineNumbersRef') lineNumbersRef!: ElementRef<HTMLDivElement>;

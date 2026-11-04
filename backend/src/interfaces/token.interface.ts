@@ -22,7 +22,8 @@ export enum TokenType {
   LESS_EQUAL = "LE",             // <=
   GREATER_EQUAL = "GE",          // >=
   ASSIGN = "ASSIGN",             // =
-  NOT = "NOT"                    // !
+  NOT = "NOT",                   // !
+  EOF = "EOF"                    // Fin del Documento
 }
 
 export interface Token {

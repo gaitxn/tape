@@ -121,7 +121,6 @@ export class ParserService {
 
       case 'WRITE':
       case 'KILL':
-      case 'EMIT':
         this.parseArguments(node);
         // Deben recibir exactamente 1 argumento
         if (node.arguments!.length !== 1) {
@@ -129,11 +128,19 @@ export class ParserService {
         }
         break;
 
+      case 'EMIT':
+        this.parseArguments(node);
+        // Deben recibir exactamente 3 argumentos
+        if (node.arguments!.length !== 2) {
+          throw new BadRequestException(`La instrucción 'EMIT' requiere exactamente 2 argumentos (valor, cabezal) en la línea ${keywordToken.line}.`);
+        }
+        break;
+
       case 'JUMP':
         this.parseArguments(node);
         // Debe recibir exactamente 3 argumentos: (condition, row, columm)
         if (node.arguments!.length !== 3) {
-          throw new BadRequestException(`La instrucción 'JUMP' requiere exactamente 3 argumentos (condition, row, column) en la línea ${keywordToken.line}.`);
+          throw new BadRequestException(`La instrucción 'JUMP' requiere exactamente 3 argumentos (condición, fila, columna) en la línea ${keywordToken.line}.`);
         }
         break;
 

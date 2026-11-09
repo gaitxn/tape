@@ -13,7 +13,7 @@ import { CompilerApi } from '../compiler.service';
 export class TextEditor implements AfterViewInit {
   private api = inject(CompilerApi);
 
-  codeContent: string = 'WRITE(12);>>;\nWRITE(4);\nEMIT(0, READ());\n// Escribe más líneas aquí...';
+  codeContent: string = 'WRITE(5); >>;\nEMIT(READ());\nJUMP(READ() == 1, #B, A);\n//Escribe más líneas aquí...';
 
   lines: string[] = this.codeContent.split('\n');
   @ViewChild('lineNumbersRef') lineNumbersRef!: ElementRef<HTMLDivElement>;

@@ -2,7 +2,7 @@ export enum ASTType {
   PROGRAM = 'Program',
   FUNCTION = 'Function',
   INSTRUCTION = 'InstructionNode',
-  BINARY_EXPRESSION = 'BinaryExpression',
+  CONDITION = 'Condition',
   IDENTIFIER = 'Identifier',
   LITERAL = 'Literal',
   NONE = 'None',

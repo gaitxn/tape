@@ -171,8 +171,35 @@ export class ParserService {
         node.arguments = [];
       }
       
+      let argIndex = 0;
       while (!this.check(TokenType.RPAREN) && !this.isAtEnd()) {
-        node.arguments.push(this.parseExpression()); // Llamada recursiva para anidamiento
+        // Si es JUMP y estamos en el primer argumento, parseamos la condición
+        if (node.name === 'JUMP') {
+          if (argIndex === 0) {
+            // 1er Argumento: Condición
+            node.arguments.push(this.parseCondition());
+          } 
+          else if (argIndex === 1) {
+            // 2do Argumento: Fila con almohadilla (ej: #B)
+            if (this.check(TokenType.ROW_REFERENCE)) {
+              const rowToken = this.advance();
+              node.arguments.push({
+                type: ASTType.LITERAL, // O el tipo que prefieras para tu AST
+                value: rowToken.value,  // Guardará '#B'
+              });
+            } else {
+              throw new BadRequestException(`Se esperaba una referencia de fila (ej. #B) en la línea ${this.peek().line}`);
+            }
+          } 
+          else {
+            // 3er Argumento en adelante (ej: columna A, número, etc.)
+            node.arguments.push(this.parseExpression());
+          }
+        } else {
+          node.arguments.push(this.parseExpression()); // Argumentos normales (ej: row, column)
+        }
+
+        argIndex++;
 
         if (this.check(TokenType.COMMA)) {
           this.advance(); // Consumir la coma ',' entre argumentos
@@ -220,6 +247,39 @@ export class ParserService {
       };
     }
     throw new BadRequestException(`Se esperaba un valor literal en la línea ${token.line}`);
+  }
+
+  private parseCondition(): AST {
+    // 1. Parsear el lado izquierdo
+    const left = this.parseExpression();
+    
+    // 2. Obtener el token del operador
+    let token = this.peek();   
+    const operators: TokenType[] = [
+      TokenType.DOUBLE_EQUAL, 
+      TokenType.NOT_EQUAL,
+      TokenType.LESS_EQUAL, 
+      TokenType.GREATER_EQUAL,
+      TokenType.LESS_THAN, 
+      TokenType.GREATER_THAN
+    ];
+    
+    if (!operators.includes(token.type)) {
+      throw new BadRequestException(`Se esperaba un operador lógico en la línea ${token.line}`);
+    }
+    
+    const operator = token.value;
+    this.advance(); // Consumir el operador lógico
+
+    // 3. Parsear el lado derecho
+    const right = this.parseExpression();
+    
+    return {
+      type: ASTType.CONDITION,
+      left: left,
+      operator: operator,
+      right: right,
+    } as AST;
   }
 
   private isAtEnd(): boolean {

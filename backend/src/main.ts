@@ -5,7 +5,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // Permite que el front (Angular, puerto 4200) llame a la API
   app.enableCors({
-    origin: ['http://localhost:4200', 'https://onrender.com', 'https://netlify.app'], // O usa origin: '*' para permitir todos
+    origin: ['*'], // Usa origin: '*' para permitir todos
   });
   await app.listen(process.env.PORT ?? 3000);
 }

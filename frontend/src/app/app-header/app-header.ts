@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CompilerApi } from '../compiler.service'; // Ajusta la ruta según donde tengas tu compiler.service.ts
 
 @Component({
   selector: 'app-header',
   imports: [],
   templateUrl: './app-header.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app-header.css',
 })
 export class AppHeader {
@@ -28,7 +29,7 @@ export class AppHeader {
       },
       error: (err) => {
         console.error('No se pudo conectar con el backend o hubo un error de sintaxis:', err);
-      }
+      },
     });
   }
 }

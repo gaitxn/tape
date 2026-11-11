@@ -15,14 +15,17 @@ export enum TokenType {
   COMMA = 'COMMA',               // ,
   SEMICOLON = 'SEMICOLON',       // ;
   COMMENT = 'COMMENT',           // //
-  DOUBLE_EQUAL = "DEQ",          // ==
-  NOT_EQUAL = "NEQ",             // !=
+  DOUBLE_EQUAL = "DOUBLE_EQUAL", // ==
+  NOT_EQUAL = "NOT_EQUAL",       // !=
   LESS_THAN = "LT",              // <
   GREATER_THAN = "GT",           // >
   LESS_EQUAL = "LE",             // <=
   GREATER_EQUAL = "GE",          // >=
   ASSIGN = "ASSIGN",             // =
-  NOT = "NOT"                    // !
+  NOT = "NOT",                   // !
+  EOF = "EOF",                   // Fin del Documento
+
+  ROW_REFERENCE = 'ROW_REFERENCE', // Ej: #A, #B, #C, #D
 }
 
 export interface Token {

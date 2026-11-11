@@ -50,6 +50,23 @@ export class LexerService {
         continue;
       }
 
+      // Reconocer referencias a filas con almohadilla (ej: #B)
+      if (char === '#') {
+        let value = '#';
+        cursor++;
+        // Verificar que la siguiente sea una letra
+        if (cursor < input.length && /[a-zA-Z]/.test(input[cursor])) {
+          while (cursor < input.length && /[a-zA-Z0-9_]/.test(input[cursor])) {
+            value += input[cursor];
+            cursor++;
+          }
+          tokens.push({ type: TokenType.ROW_REFERENCE, value, line });
+          continue;
+        } else {
+          throw new BadRequestException(`Se esperaba una letra después de '#' en la línea ${line}`);
+        }
+      }
+
       // Números
       if (isDigit(char)) {
         let end = cursor;

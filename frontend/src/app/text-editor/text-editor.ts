@@ -1,19 +1,28 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LexerApi } from '../lexer.service';
+import { CompilerApi } from '../compiler.service';
 
 @Component({
   selector: 'text-editor',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './text-editor.html',
-  styleUrls: ['./text-editor.css']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./text-editor.css'],
 })
 export class TextEditor implements AfterViewInit {
-  private api = inject(LexerApi);
+  private api = inject(CompilerApi);
 
-  codeContent: string = 'WRITE(A, 0, 16)(A, 1, 12);\n// Escribe más líneas aquí...';
+  codeContent: string =
+    'WRITE(5); >>;\nEMIT(READ(), 1);\nJUMP(READ() == 1, #B, A);\n//Escribe más líneas aquí...';
 
   lines: string[] = this.codeContent.split('\n');
   @ViewChild('lineNumbersRef') lineNumbersRef!: ElementRef<HTMLDivElement>;
@@ -35,7 +44,7 @@ export class TextEditor implements AfterViewInit {
 
   updateLines() {
     this.lines = this.codeContent.split('\n');
-    this.api.code = this.codeContent;   // solo guarda, no envía
+    this.api.code = this.codeContent; // solo guarda, no envía
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -45,8 +54,9 @@ export class TextEditor implements AfterViewInit {
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
 
-      this.codeContent = this.codeContent.substring(0, start) + '    ' + this.codeContent.substring(end);
-      
+      this.codeContent =
+        this.codeContent.substring(0, start) + '    ' + this.codeContent.substring(end);
+
       setTimeout(() => {
         textarea.selectionStart = textarea.selectionEnd = start + 4;
       });

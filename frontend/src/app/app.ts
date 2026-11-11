@@ -1,4 +1,11 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AppHeader } from './app-header/app-header';
 import { TextEditor } from './text-editor/text-editor';
@@ -8,12 +15,12 @@ import { Viewer } from './viewer/viewer';
   selector: 'app-root',
   imports: [RouterOutlet, AppHeader, TextEditor, Viewer],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrl: './app.css',
 })
 export class App implements AfterViewInit, OnDestroy {
+  @ViewChild('viewerRef') viewerRef!: ElementRef<HTMLElement>;
 
-@ViewChild('viewerRef') viewerRef!: ElementRef<HTMLElement>;
-  
   private resizeObserver!: ResizeObserver;
 
   ngAfterViewInit() {
@@ -36,7 +43,7 @@ export class App implements AfterViewInit, OnDestroy {
   private updateViewerHeight() {
     // El operador ?. evita el error si el elemento es undefined temporalmente
     const height = this.viewerRef?.nativeElement?.offsetHeight;
-    
+
     if (height && height > 0) {
       document.documentElement.style.setProperty('--dynamic-viewer-height', `${height}px`);
     } else {

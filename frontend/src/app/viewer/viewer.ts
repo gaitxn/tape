@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'viewer',
   templateUrl: './viewer.html',
-  styleUrls: ['./viewer.css']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./viewer.css'],
 })
 export class Viewer {
   // Filas fijas a la izquierda (A, B, C, D)
@@ -11,7 +12,7 @@ export class Viewer {
 
   // Generamos un arreglo de 35 columnas (o N columnas) para numerar del 1 a N arriba
   totalColumns: number = 35;
-  
+
   // Sistema para manejar qué celdas están activas
   activeCells = new Set<string>();
   gridData: number[][] = this.rows.map((row, rIndex) => {
@@ -21,11 +22,11 @@ export class Viewer {
     });
   });
 
-  getData(rIndex:number, cIndex:number) {
+  getData(rIndex: number, cIndex: number) {
     return this.gridData[rIndex][cIndex];
   }
-  
-  setData(rIndex:number, cIndex:number, value:number) {
+
+  setData(rIndex: number, cIndex: number, value: number) {
     this.gridData[rIndex][cIndex] = value;
   }
 

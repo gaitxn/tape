@@ -57,33 +57,56 @@ export class ParserService {
     }
 
     if (this.check(TokenType.IDENTIFIER)) {
-      const variableToken = this.peek();
-      
-      // Comprobar si el SIGUIENTE token es un operador de asignación '='
-      const nextToken = this.tokens[this.current + 1];
-      const isAssignment = nextToken && nextToken.type === TokenType.ASSIGN;
+    const variableToken = this.peek();
+    
+    // Comprobar los tokens siguientes para ver qué estructura es
+    const nextToken = this.tokens[this.current + 1];
+    const isAssignment = nextToken && nextToken.type === TokenType.ASSIGN;
+    const isFunctionCall = nextToken && nextToken.type === TokenType.LPAREN;
 
-      if (isAssignment) {
-        // CASO A: Es una asignación (ej: x = 10)
-        this.advance(); // Consumir el identificador
-        this.consume(TokenType.ASSIGN, 'Se esperaba operador de asignación \'=\'.');
-        const valueNode = this.parseLiteral(); // parseExpression() para expresiones a la derecha
-        
-        return {
-          type: ASTType.IDENTIFIER,
-          name: variableToken.value,
-          value: valueNode.value,
-          arguments: [],
-        };
-      } else {
-        // CASO B: Es solo un uso/referencia de variable (ej: WRITE(C) o parámetros de DEFINE)
-        this.advance(); // Consumir el identificador
-        return {
-          type: ASTType.IDENTIFIER,
-          name: variableToken.value,
-        };
+    const identifierToken = this.advance(); // Consumir el identificador
+
+    if (isAssignment) {
+      // CASO A: Es una asignación (ej: x = 10)
+      this.consume(TokenType.ASSIGN, 'Se esperaba operador de asignación \'=\'.');
+      const valueNode = this.parseExpression(); // Usar parseExpression para el valor derecho
+      
+      return {
+        type: ASTType.IDENTIFIER,
+        name: variableToken.value,
+        value: valueNode.value,
+        arguments: [],
+      };
+    } 
+    else if (isFunctionCall) {
+      // CASO B: Es una llamada a función (ej: miFuncion(1, 2))
+      this.consume(TokenType.LPAREN, "Se esperaba '(' para los argumentos de la función.");
+      
+      const args: AST[] = [];
+      while (!this.check(TokenType.RPAREN) && !this.isAtEnd()) {
+        args.push(this.parseExpression());
+
+        if (this.check(TokenType.COMMA)) {
+          this.advance(); // Consumir la coma ',' entre argumentos
+        }
       }
+
+      this.consume(TokenType.RPAREN, "Se esperaba ')' al cerrar los argumentos de la función.");
+
+      return {
+        type: ASTType.CALL, // Nodo de tipo llamada a función
+        name: identifierToken.value,
+        arguments: args,
+      };
+    } 
+    else {
+      // CASO C: Es solo un uso o referencia de variable común (ej: WRITE(C))
+      return {
+        type: ASTType.IDENTIFIER,
+        name: variableToken.value,
+      };
     }
+  }
 
     if ([TokenType.UP, TokenType.DOWN, TokenType.SHIFT_LEFT, TokenType.SHIFT_RIGHT].includes(token.type)) {
       this.advance();
@@ -131,8 +154,8 @@ export class ParserService {
       case 'EMIT':
         this.parseArguments(node);
         // Deben recibir exactamente 3 argumentos
-        if (node.arguments!.length !== 2) {
-          throw new BadRequestException(`La instrucción 'EMIT' requiere exactamente 2 argumentos (valor, cabezal) en la línea ${keywordToken.line}.`);
+        if (node.arguments!.length !== 3) {
+          throw new BadRequestException(`La instrucción 'EMIT' requiere exactamente 3 argumentos (valor, duración, cabezal) en la línea ${keywordToken.line}.`);
         }
         break;
 

@@ -1,6 +1,7 @@
 export enum ASTType {
   PROGRAM = 'Program',
   FUNCTION = 'Function',
+  CALL = 'Call',
   INSTRUCTION = 'InstructionNode',
   CONDITION = 'Condition',
   IDENTIFIER = 'Identifier',

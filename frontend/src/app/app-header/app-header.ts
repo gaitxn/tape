@@ -24,6 +24,7 @@ export class AppHeader {
 
     this.compilerApi.compileFull(this.codeContent).subscribe({
       next: (response) => {
+        console.log('Tokens generados: ', this.compilerApi.tokens);
         console.log('AST generado:', this.compilerApi.ast);
         console.log('Matriz de Audio (para Tone.js):', response.audioMatrix);
         console.log('Historial de Cintas (para el Viewer):', response.tapeHistory);

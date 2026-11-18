@@ -8,9 +8,14 @@ import { TapeMatrix } from './tape-matrix.model.js';
 
 @Injectable()
 export class TuringService {
-    private currentAudioTick = 0;
+    private currentAudioTick: number = 0;
+
+    private resetTick() {
+        this.currentAudioTick = 0;
+    }
 
     execute(ast: AST): AudioMatrixDTO {
+        this.resetTick();
         const tape = new TapeMatrix();
         const context = new ExecutionContext();
         const audioEvents: AudioEvent[] = [];

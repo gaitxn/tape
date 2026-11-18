@@ -17,10 +17,10 @@ export enum TokenType {
   COMMENT = 'COMMENT',           // //
   DOUBLE_EQUAL = "DOUBLE_EQUAL", // ==
   NOT_EQUAL = "NOT_EQUAL",       // !=
-  LESS_THAN = "LT",              // <
-  GREATER_THAN = "GT",           // >
-  LESS_EQUAL = "LE",             // <=
-  GREATER_EQUAL = "GE",          // >=
+  LESS_THAN = "LESS_THAN",              // <
+  GREATER_THAN = "GREATER_THAN",           // >
+  LESS_EQUAL = "LESS_EQUAL",             // <=
+  GREATER_EQUAL = "GREATER_EQUAL",          // >=
   ASSIGN = "ASSIGN",             // =
   NOT = "NOT",                   // !
   EOF = "EOF",                   // Fin del Documento

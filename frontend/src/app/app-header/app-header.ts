@@ -20,15 +20,16 @@ export class AppHeader {
 
   build() {
     this.codeContent = this.compilerApi.code;
-    console.log('Iniciando compilación (Lexer + Parser)...');
-    console.log('Texto actual en el editor:', this.codeContent);
-    // Aquí llamamos a compileFull pasando el código que el usuario escribió
+    console.log('Iniciando compilación completa (Lexer + Parser + Turing Engine)...');
+
     this.compilerApi.compileFull(this.codeContent).subscribe({
       next: (response) => {
-        console.log('Respuesta del Parser (AST):', response.ast);
+        console.log('AST generado:', this.compilerApi.ast);
+        console.log('Matriz de Audio (para Tone.js):', response.audioMatrix);
+        console.log('Historial de Cintas (para el Viewer):', response.tapeHistory);
       },
       error: (err) => {
-        console.error('No se pudo conectar con el backend o hubo un error de sintaxis:', err);
+        console.error('Error de compilación o ejecución:', err);
       },
     });
   }

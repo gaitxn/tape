@@ -1,5 +1,4 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { LexerService } from '../lexer/lexer.service.js';
 import { ParserService } from './parser.service.js';
 import { Token } from '../interfaces/token.interface.js';
 

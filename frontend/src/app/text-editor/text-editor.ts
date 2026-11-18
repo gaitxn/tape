@@ -21,8 +21,19 @@ import { CompilerApi } from '../compiler.service';
 export class TextEditor implements AfterViewInit {
   private api = inject(CompilerApi);
 
-  codeContent: string =
-    'WRITE(5); >>;\nEMIT(READ(), 1);\nJUMP(READ() == 1, #B, A);\n//Escribe más líneas aquí...';
+  codeContent: string = `WRITE(5); >>;
+SPAWN(1);
+EMIT(READ(), 2, 1);
+JUMP(READ() == 1, #B, A);
+
+DEFINE JumperOne(value){
+    JUMP(READ() == value, #A, value);
+}
+
+JumperOne(3);
+EMIT(2, 6, 1);
+KILL(1);
+// Escribe más líneas aquí...`;
 
   lines: string[] = this.codeContent.split('\n');
   @ViewChild('lineNumbersRef') lineNumbersRef!: ElementRef<HTMLDivElement>;

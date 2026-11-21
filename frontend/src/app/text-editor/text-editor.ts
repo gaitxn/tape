@@ -24,7 +24,7 @@ export class TextEditor implements AfterViewInit {
   codeContent: string = `WRITE(5); >>;
 SPAWN(1);
 EMIT(READ(), 2, 1);
-JUMP(READ() == 1, #B, A);
+JUMP(READ() == 1, #B, 1);
 
 DEFINE JumperOne(value){
     JUMP(READ() == value, #A, value);

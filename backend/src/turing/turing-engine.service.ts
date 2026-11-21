@@ -8,10 +8,10 @@ import { TapeMatrix } from './tape-matrix.model.js';
 
 @Injectable()
 export class TuringService {
-    private currentAudioTick: number = 0;
+    private headAudioTicks: Map<number, number> = new Map();
 
     private resetTick() {
-        this.currentAudioTick = 0;
+        this.headAudioTicks.clear();
     }
 
     execute(ast: AST): AudioMatrixDTO {
@@ -24,6 +24,11 @@ export class TuringService {
 
         // Recorrido recursivo del AST
         this.evaluateNode(ast, tape, context, audioEvents, tapeHistory, metadata);
+
+        audioEvents.sort((a, b) => 
+            a.time - b.time || 
+            String(a.track).localeCompare(String(b.track), undefined, { numeric: true })
+        );
 
         return {
             success: true,
@@ -49,12 +54,12 @@ export class TuringService {
                 if (node.body) {
                     let pc = 0;
                     let totalExecutions = 0;
-                    const MAX_ITERATIONS = 5000; // Evita que un JUMP infinito cuelgue el servidor
+                    const MAX_ITERATIONS = 1000; // Evita que un JUMP infinito cuelgue el servidor
 
                     while (pc < node.body.length) {
                         if (++totalExecutions > MAX_ITERATIONS) {
                         throw new BadRequestException(
-                            'SEMANTIC_ERR_INFINITE_LOOP: Se excedió el límite máximo de ciclos permitidos.'
+                            'Se excedió el límite máximo de ciclos permitidos (1000).'
                         );
                         }
 
@@ -161,6 +166,12 @@ export class TuringService {
             case 'SPAWN': {
                 const headId = Number(this.evaluateNode(args[0], tape, context, audioEvents, tapeHistory, metadata));
                 tape.spawnHead(headId);
+                const maxCurrentTick = this.headAudioTicks.size > 0
+                    ? Math.max(...this.headAudioTicks.values())
+                    : 0;
+
+                // El nuevo cabezal arranca sincronizado en el punto actual de la línea de tiempo
+                this.headAudioTicks.set(headId, maxCurrentTick);
                 break;
             }
 
@@ -174,27 +185,35 @@ export class TuringService {
                 // 1. Evaluar los 3 argumentos: EMIT(valor, ticks, headId)
                 const rawValue = Number(this.evaluateNode(args[0], tape, context, audioEvents, tapeHistory, metadata));
                 const durationTicks = Number(this.evaluateNode(args[1], tape, context, audioEvents, tapeHistory, metadata));
-                const headId = this.evaluateNode(args[2], tape, context, audioEvents, tapeHistory, metadata);
+                const headId = Number(this.evaluateNode(args[2], tape, context, audioEvents, tapeHistory, metadata));
 
                 // 2. Validar que el cabezal de emisión fue inicializado con SPAWN(headId)
                 tape.validateEmitHead(headId);
+                const note = this.mapValueToNote(rawValue);
 
-                // 3. Calcular tiempos musicales según metadata.bpm
-                const secondsPerTick = 60 / (metadata.bpm * 4); // 1 tick = 1 semicorchea (16n)
-                const startTimeSec = Number((this.currentAudioTick * secondsPerTick).toFixed(3));
-                const durationSec = `${(durationTicks * secondsPerTick).toFixed(3)}s`;
+                // 3. Obtener el reloj independiente de ESTE head (si es su primera nota, empieza en 0)
+                const currentHeadTick = this.headAudioTicks.get(headId) ?? 0;
 
-                // 4. Registrar el evento en la matriz de audio
-                audioEvents.push({
-                    step: this.currentAudioTick,
-                    track: Number(headId),
-                    note: this.mapValueToNote(rawValue),
-                    duration: durationSec,
-                    time: startTimeSec,
-                });
+                if (note !== null) {
+                    // 4. Calcular tiempos musicales según metadata.bpm
+                    const secondsPerTick = 60 / (metadata.bpm * 4); // 1 tick = 1 semicorchea (16n)
+                    const startTimeSec = Number((currentHeadTick * secondsPerTick).toFixed(3));
+                    const durationSec = `${(durationTicks * secondsPerTick).toFixed(3)}s`;
 
-                // 5. Avanzar el reloj de audio y el paso de la cinta
-                this.currentAudioTick += durationTicks;
+                    // 5. Registrar el evento en la matriz de audio usando el reloj de este head
+                    audioEvents.push({
+                        step: currentHeadTick,
+                        track: headId,
+                        note: note,
+                        duration: durationSec,
+                        time: startTimeSec,
+                    });
+                }
+
+                // 6. Avanzar ÚNICAMENTE el reloj de este headId
+                this.headAudioTicks.set(headId, currentHeadTick + durationTicks);
+
+                // Avanzar el paso visual de la cinta
                 tape.incrementStep();
                 break;
                 }
@@ -289,14 +308,20 @@ export class TuringService {
         }
     }
 
-    private mapValueToNote(value: number): string {
-    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-    const safeValue = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+    private mapValueToNote(value: number): string | null {
+        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const safeValue = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
 
-    const midiNote = safeValue < 24 ? safeValue + 48 : Math.min(safeValue, 108);
-    const octave = Math.floor(midiNote / 12) - 1;
-    const noteName = notes[((midiNote % 12) + 12) % 12];
+        // 0 representa silencio (no se dispara nota)
+        if (safeValue === 0) {
+            return null;
+        }
 
-    return `${noteName}${octave}`;
+        // Mapeo MIDI estándar directo (1 a 127; ej: 60 = C4, 69 = A4)
+        const midiNote = Math.min(safeValue, 127);
+        const octave = Math.floor(midiNote / 12) - 1;
+        const noteName = notes[midiNote % 12];
+
+        return `${noteName}${octave}`;
     }
 }

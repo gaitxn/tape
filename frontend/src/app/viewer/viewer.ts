@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { inject } from '@angular/core';
+import { AudioEngineApi } from '../services/audio-engine.service';
 
 @Component({
   selector: 'viewer',
@@ -7,6 +9,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./viewer.css'],
 })
 export class Viewer {
+  public readonly audioEngine = inject(AudioEngineApi);
   // Filas fijas a la izquierda (A, B, C, D)
   rows: string[] = ['A', 'B', 'C', 'D'];
 
@@ -22,10 +25,6 @@ export class Viewer {
     });
   });
 
-  getData(rIndex: number, cIndex: number) {
-    return this.gridData[rIndex][cIndex];
-  }
-
   setData(rIndex: number, cIndex: number, value: number) {
     this.gridData[rIndex][cIndex] = value;
   }
@@ -39,7 +38,20 @@ export class Viewer {
     }
   }
 
-  isActive(rowIndex: number, colIndex: number): boolean {
-    return this.activeCells.has(`${rowIndex}-${colIndex}`);
+  public getData(rIndex: number, cIndex: number): number {
+    const liveMap = this.audioEngine.liveTapeCells();
+    if (liveMap.size > 0) {
+      return liveMap.get(`${rIndex}-${cIndex}`) ?? 0;
+    }
+    return this.gridData[rIndex][cIndex];
+  }
+
+  public isEmitted(rIndex: number, cIndex: number): boolean {
+    return (this.audioEngine.emittedCells().get(`${rIndex}-${cIndex}`) ?? 0) > 0;
+  }
+
+  public isHeadAt(rIndex: number, cIndex: number): boolean {
+    const head = this.audioEngine.activeHead();
+    return head !== null && head[0] === rIndex && head[1] === cIndex;
   }
 }

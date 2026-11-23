@@ -34,7 +34,6 @@ export class TapeMatrix {
     this.grid[rowKey][colIdx] = Math.floor(value);
 
     this.registerActiveCell(rowIdx, colIdx);
-    this.currentStep++;
   }
 
   public readCurrentCell(): number {

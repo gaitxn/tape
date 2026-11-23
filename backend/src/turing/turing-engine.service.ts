@@ -14,13 +14,16 @@ export class TuringService {
         this.headAudioTicks.clear();
     }
 
-    execute(ast: AST): AudioMatrixDTO {
+    execute(ast: AST, incomingMetadata?: CompilationMetadata): AudioMatrixDTO {
         this.resetTick();
         const tape = new TapeMatrix();
         const context = new ExecutionContext();
         const audioEvents: AudioEvent[] = [];
         const tapeHistory: TapeHistory[] = [];
-        const metadata: CompilationMetadata = { bpm: 60 };
+        const metadata: CompilationMetadata = {
+            bpm: 120,
+            ...incomingMetadata,
+        };
 
         // Recorrido recursivo del AST
         this.evaluateNode(ast, tape, context, audioEvents, tapeHistory, metadata);
@@ -196,7 +199,7 @@ export class TuringService {
 
                 if (note !== null) {
                     // 4. Calcular tiempos musicales según metadata.bpm
-                    const secondsPerTick = 60 / (metadata.bpm * 4); // 1 tick = 1 semicorchea (16n)
+                    const secondsPerTick = 60 / (metadata.bpm * 8); // 1 tick = 1 semicorchea (16n)
                     const startTimeSec = Number((currentHeadTick * secondsPerTick).toFixed(3));
                     const durationSec = `${(durationTicks * secondsPerTick).toFixed(3)}s`;
 
@@ -207,6 +210,7 @@ export class TuringService {
                         note: note,
                         duration: durationSec,
                         time: startTimeSec,
+                        position: [...tape.getHeadPosition()] as [number, number],
                     });
                 }
 

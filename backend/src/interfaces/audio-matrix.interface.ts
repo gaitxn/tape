@@ -10,6 +10,7 @@ export interface AudioEvent {
   note: string | null;  // Valor MIDI o nota generada (0-128)
   duration: string | number;
   time: number;
+  position?: [number, number];
 }
 
 export interface TapeHistory {

@@ -10,7 +10,7 @@ from '../interfaces/audio-matrix.interface';
 @Injectable({ providedIn: 'root' })
 export class CompilerApi {
   private http = inject(HttpClient);
-  private baseUrl = /*import.meta.env.NG_APP_PUBLIC_API_URL ||*/ 'http://localhost:3000';
+  private baseUrl = import.meta.env.NG_APP_PUBLIC_API_URL || 'http://localhost:3000';
 
   code: string = '';
   tokens: Token[] = [];

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CompilerApi } from '../compiler.service';
+import { CompilerApi } from '../services/compiler.service';
 
 @Component({
   selector: 'text-editor',

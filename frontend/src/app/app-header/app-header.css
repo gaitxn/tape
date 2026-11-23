@@ -127,3 +127,51 @@ nav {
 .action-btn.primary:hover {
     background-color: #0369a1;
 }
+
+.bpm-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #131b2e;
+  border: 1px solid #2b3852;
+  border-radius: 6px;
+  padding: 4px 10px;
+  height: 32px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bpm-control:focus-within {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+}
+
+.bpm-control label {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  user-select: none;
+  cursor: pointer;
+}
+
+.bpm-input {
+  width: 44px;
+  background: transparent;
+  border: none;
+  color: #f1f5f9;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  outline: none;
+  padding: 0;
+  -moz-appearance: textfield; /* Oculta flechas en Firefox */
+}
+
+/* Oculta el cuadro blanco de flechas por defecto en Chrome, Edge y Safari */
+.bpm-input::-webkit-outer-spin-button,
+.bpm-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

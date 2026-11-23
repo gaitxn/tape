@@ -7,9 +7,10 @@ export interface CompilationMetadata {
 export interface AudioEvent {
   step: number;
   track: number | string; // Ej: 'A', 'B', 'C', 'D' o índice numérico
-  note: string | number;  // Valor MIDI o nota generada (0-128)
+  note: string | null;  // Valor MIDI o nota generada (0-128)
   duration: string | number;
   time: number;
+  position?: [number, number];
 }
 
 export interface TapeHistory {

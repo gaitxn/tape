@@ -7,7 +7,7 @@
                 
                 <!-- Números del 1 a N sobre cada columna -->
                 @for (col of gridData[0]; track $index) {
-                    <th class="col-header">{{ $index + 1 }}</th>
+                    <th class="col-header">{{ $index }}</th>
                 }
             </tr>
         </thead>
@@ -20,8 +20,8 @@
                     <!-- Celdas interactivas de la cuadrícula -->
                     @for (cellValue of row; track $index; let cIndex = $index) {
                         <td 
-                            [class.active]="isActive(rIndex, cIndex)" 
-                            (click)="   toggleCell(rIndex, cIndex);">
+                            [class.active]="isEmitted(rIndex, cIndex)"
+                            (click)="toggleCell(rIndex, cIndex)">
                             {{ getData(rIndex, cIndex) }}
                         </td>
                     }

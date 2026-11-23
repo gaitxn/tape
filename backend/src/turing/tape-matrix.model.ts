@@ -3,7 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 export class TapeMatrix {
   private readonly ROWS = ['A', 'B', 'C', 'D'];
   private readonly MAX_COLS = 35;
-  private readonly MAX_CELL_VALUE = 128;
+  private readonly MAX_CELL_VALUE = 127;
 
   private grid: Record<string, number[]> = {
     A: new Array(this.MAX_COLS).fill(0),
@@ -34,7 +34,6 @@ export class TapeMatrix {
     this.grid[rowKey][colIdx] = Math.floor(value);
 
     this.registerActiveCell(rowIdx, colIdx);
-    this.currentStep++;
   }
 
   public readCurrentCell(): number {
@@ -108,7 +107,7 @@ export class TapeMatrix {
     }
 
     this.heads.set(id, { row: cleanRow, col });
-    this.currentStep++;
+    // this.currentStep++;
   }
 
   public killHead(id: string | number): void {
@@ -116,7 +115,7 @@ export class TapeMatrix {
       throw new BadRequestException(`El cabezal '${id}' no existe.`);
     }
     this.heads.delete(id);
-    this.currentStep++;
+    // this.currentStep++;
   }
 
   public validateEmitHead(headId: number): void {

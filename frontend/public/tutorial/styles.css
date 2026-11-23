@@ -1,0 +1,524 @@
+:root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-alt: #f1f5f9;
+    --sidebar-bg: #0f172a;
+    --sidebar-text: #cbd5e1;
+    --sidebar-muted: #64748b;
+    --text: #1e293b;
+    --muted: #475569;
+    --border: #e2e8f0;
+    --accent: #0ea5e9;
+    --accent-dark: #0284c7;
+    --accent-soft: #e0f2fe;
+    --code-bg: #0f172a;
+    --code-header: #1e293b;
+    --code-text: #f8fafc;
+    --note-bg: #fefce8;
+    --note-border: #eab308;
+    --warn-bg: #fef2f2;
+    --warn-border: #ef4444;
+    --success-bg: #f0fdf4;
+    --success-border: #22c55e;
+    --sidebar-width: 290px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 2rem;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--bg);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =========================================
+   SIDEBAR LATERAL (ESTILO DOCUMENTACIÓN LILYPOND)
+   ========================================= */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #1e293b;
+    z-index: 100;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 1.75rem 1.5rem 1.25rem;
+    border-bottom: 1px solid #1e293b;
+}
+
+.brand-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(14, 165, 233, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    margin-bottom: 0.6rem;
+}
+
+.sidebar-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+
+.sidebar-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    color: var(--sidebar-muted);
+}
+
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 0.75rem 2rem;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+.nav-group-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sidebar-muted);
+    padding: 0.9rem 0.75rem 0.35rem;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 2px;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: 6px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition: all 0.15s ease;
+    border-left: 2px solid transparent;
+}
+
+.sidebar-nav a:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+}
+
+.sidebar-nav a.active {
+    background: rgba(14, 165, 233, 0.14);
+    color: #38bdf8;
+    font-weight: 600;
+    border-left-color: #38bdf8;
+}
+
+.nav-num {
+    font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    font-size: 0.76rem;
+    color: var(--sidebar-muted);
+    min-width: 1.3rem;
+}
+
+.sidebar-nav a.active .nav-num {
+    color: #38bdf8;
+}
+
+/* Botón móvil para abrir/cerrar menú */
+.mobile-toggle {
+    display: none;
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    z-index: 200;
+    background: var(--sidebar-bg);
+    color: #ffffff;
+    border: 1px solid #334155;
+    border-radius: 999px;
+    padding: 0.75rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
+}
+
+/* =========================================
+   CONTENIDO PRINCIPAL
+   ========================================= */
+.content-wrapper {
+    margin-left: var(--sidebar-width);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+header.hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    padding: 3.5rem 3rem 3rem;
+    border-bottom: 1px solid #334155;
+}
+
+.hero-inner {
+    max-width: 860px;
+}
+
+.hero h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    margin: 0.5rem 0 0.75rem;
+    font-size: clamp(2.1rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.hero p {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 1.08rem;
+    max-width: 720px;
+}
+
+main {
+    max-width: 920px;
+    width: 100%;
+    padding: 2.5rem 3rem 5rem;
+}
+
+section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2.25rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    margin-top: 0;
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--surface-alt);
+    font-size: 1.65rem;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+h2 .sec-num {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+}
+
+h3 {
+    margin-top: 1.8rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.18rem;
+    color: #1e293b;
+}
+
+p {
+    margin: 0.75rem 0;
+}
+
+.lead {
+    font-size: 1.12rem;
+    color: #0f172a;
+}
+
+/* Código inline */
+code {
+    font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    background: var(--surface-alt);
+    color: #0369a1;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    padding: 0.12em 0.38em;
+    font-size: 0.88em;
+}
+
+/* =========================================
+   BLOQUES DE CÓDIGO CON BARRA SUPERIOR
+   ========================================= */
+.code-block {
+    margin: 1.25rem 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #1e293b;
+    background: var(--code-bg);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--code-header);
+    padding: 0.45rem 1rem;
+    border-bottom: 1px solid #334155;
+    font-size: 0.76rem;
+    color: #94a3b8;
+    font-family: "JetBrains Mono", monospace;
+}
+
+.copy-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    border: 1px solid #475569;
+    border-radius: 5px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.74rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.copy-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+}
+
+pre {
+    margin: 0;
+    overflow-x: auto;
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 1.1rem 1.25rem;
+    line-height: 1.55;
+}
+
+pre code {
+    background: transparent;
+    border: none;
+    color: inherit;
+    padding: 0;
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   CALLOUTS (NOTAS, ADVERTENCIAS, ÉXITO)
+   ========================================= */
+.callout {
+    padding: 1rem 1.25rem;
+    margin: 1.35rem 0;
+    border-left: 4px solid;
+    border-radius: 0 8px 8px 0;
+}
+
+.callout-title {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.note {
+    background: var(--note-bg);
+    border-color: var(--note-border);
+    color: #713f12;
+}
+
+.warning {
+    background: var(--warn-bg);
+    border-color: var(--warn-border);
+    color: #7f1d1d;
+}
+
+.success {
+    background: var(--success-bg);
+    border-color: var(--success-border);
+    color: #14532d;
+}
+
+/* =========================================
+   TARJETAS Y TABLAS
+   ========================================= */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0;
+}
+
+.card {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.15rem 1.25rem;
+}
+
+.card h4 {
+    margin: 0 0 0.4rem;
+    color: #0f172a;
+}
+
+.card p {
+    margin: 0;
+    font-size: 0.94rem;
+    color: var(--muted);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.25rem 0;
+    font-size: 0.94rem;
+}
+
+th, td {
+    border: 1px solid var(--border);
+    padding: 0.7rem 0.9rem;
+    text-align: left;
+}
+
+th {
+    background: var(--surface-alt);
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* Matriz visual de la cinta */
+.matrix-wrapper {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+}
+
+.matrix {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: auto;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+}
+
+.matrix th, .matrix td {
+    min-width: 50px;
+    text-align: center;
+    padding: 0.5rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.88rem;
+}
+
+.matrix .row-label {
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.matrix .cell-active {
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+    font-weight: 700;
+}
+
+.signature {
+    display: inline-block;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 600;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    padding: 0.45rem 0.85rem;
+    border-radius: 6px;
+    color: #0f172a;
+}
+
+/* Navegación inferior entre secciones */
+.doc-footer {
+    max-width: 920px;
+    padding: 0 3rem 3.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.doc-footer a {
+    color: var(--accent-dark);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.doc-footer a:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   RESPONSIVE (TABLET Y MÓVIL)
+   ========================================= */
+@media (max-width: 960px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .mobile-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+    }
+
+    header.hero, main, .doc-footer {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    section {
+        padding: 1.5rem;
+    }
+}

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tutorial del lenguaje DSL de TAPE — Turing Audio Processing Engine">
+    <title>Tutorial del lenguaje TAPE DSL</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body id="top">
+
+<!-- Botón flotante para dispositivos móviles -->
+<button class="mobile-toggle" id="menuToggle" aria-label="Abrir índice">☰ Índice</button>
+
+<!-- MENÚ LATERAL FIJO -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="brand-badge">Documentación v1.0</span>
+        <h2 class="sidebar-title">TAPE DSL</h2>
+        <p class="sidebar-subtitle">Manual de aprendizaje</p>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Tabla de contenidos">
+        <div class="nav-group-label">I. Fundamentos</div>
+        <ul>
+            <li><a href="#intro"><span class="nav-num">01</span> ¿Qué es TAPE?</a></li>
+            <li><a href="#model"><span class="nav-num">02</span> El modelo de ejecución</a></li>
+            <li><a href="#first-program"><span class="nav-num">03</span> Tu primer programa</a></li>
+            <li><a href="#comments"><span class="nav-num">04</span> Comentarios y separadores</a></li>
+        </ul>
+
+        <div class="nav-group-label">II. Memoria y Sonido</div>
+        <ul>
+            <li><a href="#write"><span class="nav-num">05</span> WRITE: escribir en cinta</a></li>
+            <li><a href="#movement"><span class="nav-num">06</span> Movimiento del cabezal</a></li>
+            <li><a href="#read"><span class="nav-num">07</span> READ: leer celda actual</a></li>
+            <li><a href="#spawn"><span class="nav-num">08</span> Canales y SPAWN</a></li>
+            <li><a href="#emit"><span class="nav-num">09</span> EMIT: producir sonido</a></li>
+        </ul>
+
+        <div class="nav-group-label">III. Control y Modularidad</div>
+        <ul>
+            <li><a href="#jump"><span class="nav-num">10</span> JUMP y control de flujo</a></li>
+            <li><a href="#variables"><span class="nav-num">11</span> Variables y asignaciones</a></li>
+            <li><a href="#functions"><span class="nav-num">12</span> Funciones con DEFINE</a></li>
+            <li><a href="#complete"><span class="nav-num">13</span> Programa completo</a></li>
+        </ul>
+
+        <div class="nav-group-label">IV. Partitura y Referencia</div>
+        <ul>
+            <li><a href="#cancrizans"><span class="nav-num">14</span> Ejemplo: Cancrizans</a></li>
+            <li><a href="#errors"><span class="nav-num">15</span> Errores frecuentes</a></li>
+            <li><a href="#reference"><span class="nav-num">16</span> Referencia rápida</a></li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="content-wrapper">
+    <header class="hero">
+        <div class="hero-inner">
+            <span class="brand-badge">Turing Audio Processing Engine</span>
+            <h1>Tutorial del lenguaje TAPE</h1>
+            <p>
+                Guía práctica paso a paso para escribir programas capaces de construir
+                patrones musicales, contrapunto polifónico y estructuras de audio mediante
+                una Máquina de Turing Multipista.
+            </p>
+        </div>
+    </header>
+
+    <main>
+        <section id="intro">
+            <h2><span class="sec-num">01</span> ¿Qué es TAPE?</h2>
+            <p class="lead">
+                <strong>TAPE</strong> (<em>Turing Audio Processing Engine</em>) es un entorno
+                interactivo web para componer patrones musicales y experimentar con audio
+                mediante un <strong>Lenguaje de Dominio Específico (DSL)</strong>.
+            </p>
+            <p>
+                El lenguaje utiliza como modelo conceptual una
+                <strong>Máquina de Turing Multipista</strong>. El programa manipula una matriz
+                de celdas mediante un cabezal de lectura/escritura y utiliza canales de
+                emisión independientes para convertir los valores almacenados en eventos
+                sonoros.
+            </p>
+            <p>
+                En términos simples: primero puedes <strong>escribir datos en una cinta</strong>,
+                después <strong>recorrerla</strong>, leer sus valores y finalmente
+                <strong>emitirlos como sonido</strong>.
+            </p>
+            <div class="callout note">
+                <span class="callout-title">Idea fundamental</span>
+                El cabezal de lectura/escritura y los canales de sonido son conceptos
+                diferentes. El cabezal se desplaza por la matriz; un canal de emisión es
+                utilizado por <code>EMIT</code> para producir sonido.
+            </div>
+        </section>
+
+        <section id="model">
+            <h2><span class="sec-num">02</span> El modelo de ejecución</h2>
+            <p>
+                La memoria principal del programa puede visualizarse como una matriz de
+                <strong>4 filas</strong> y <strong>35 columnas</strong>.
+            </p>
+
+            <div class="matrix-wrapper">
+                <table class="matrix">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>...</th>
+                            <th>34</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-label">A</td>
+                            <td class="cell-active">0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">B</td>
+                            <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">C</td>
+                            <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">D</td>
+                            <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>
+                Las filas se identifican con <code>A</code>, <code>B</code>, <code>C</code> y
+                <code>D</code>. Las columnas van de <code>0</code> a <code>34</code>.
+            </p>
+            <p>
+                El cabezal de lectura/escritura siempre ocupa una posición concreta de esta
+                matriz (por defecto inicia en <code>A,0</code>). Las instrucciones <code>WRITE</code>,
+                <code>READ</code> y los movimientos actúan sobre la posición actual de dicho cabezal.
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>Cabezal de lectura/escritura</h4>
+                    <p>
+                        Se utiliza para recorrer la matriz y leer o escribir valores.
+                        No es un canal de audio.
+                    </p>
+                </div>
+                <div class="card">
+                    <h4>Canales de emisión</h4>
+                    <p>
+                        Son creados mediante <code>SPAWN</code> y utilizados por
+                        <code>EMIT</code> para producir sonido.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="first-program">
+            <h2><span class="sec-num">03</span> Tu primer programa</h2>
+            <p>Empecemos con el programa más pequeño que permite escribir una nota:</p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>WRITE(60)</code></pre>
+            </div>
+
+            <p>
+                Esto escribe el valor MIDI <code>60</code> en la celda que ocupa actualmente
+                el cabezal de lectura/escritura.
+            </p>
+            <p>Para escribir varias notas en posiciones consecutivas:</p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>WRITE(60);>>
+WRITE(62);>>
+WRITE(64)</code></pre>
+            </div>
+
+            <p>El resultado conceptual en la fila <code>A</code> es:</p>
+            <pre><code>[60] [62] [64] [0] [0] ...</code></pre>
+            <p>Aquí <code>0</code> representa silencio.</p>
+        </section>
+
+        <section id="comments">
+            <h2><span class="sec-num">04</span> Comentarios y separadores</h2>
+            <h3>Comentarios</h3>
+            <p>
+                TAPE utiliza comentarios de una sola línea mediante <code>//</code>.
+                Todo lo que aparezca después de <code>//</code> en esa misma línea es ignorado.
+            </p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>// Esta línea es un comentario
+WRITE(60) // Escribe un Do central</code></pre>
+            </div>
+
+            <p>Actualmente no existen comentarios multilínea.</p>
+
+            <h3>Punto y coma</h3>
+            <p>
+                El punto y coma <code>;</code> es opcional y funciona únicamente como ayuda
+                visual para separar expresiones. El compilador lo ignora.
+            </p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>WRITE(60);>>
+WRITE(62)>>
+
+// También es posible escribir varias expresiones en una misma línea:
+WRITE(71);v WRITE(72)>></code></pre>
+            </div>
+
+            <div class="callout note">
+                <span class="callout-title">Consejo</span>
+                Usa <code>;</code> cuando una línea contenga varias acciones. No cambia
+                la semántica del programa; solo hace que el código sea más fácil de leer.
+            </div>
+        </section>
+
+        <section id="write">
+            <h2><span class="sec-num">05</span> WRITE: escribir en la cinta</h2>
+            <p>La instrucción <code class="signature">WRITE(valor)</code> escribe un valor en la celda actualmente ocupada por el cabezal de lectura/escritura.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Valor</th>
+                        <th>Significado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>0</code></td><td>Silencio.</td></tr>
+                    <tr><td><code>1</code>–<code>127</code></td><td>Valores de nota MIDI.</td></tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>WRITE(60)
+WRITE(64)
+WRITE(67)</code></pre>
+            </div>
+
+            <p>
+                Las tres instrucciones escriben sucesivamente sobre la
+                <strong>misma celda</strong>, porque el cabezal no se mueve automáticamente.
+                Para escribir en otras posiciones debes moverlo explícitamente.
+            </p>
+
+            <div class="callout warning">
+                <span class="callout-title">Importante</span>
+                <code>WRITE</code> no mueve el cabezal. Escribir y desplazarse son dos
+                operaciones independientes.
+            </div>
+        </section>
+
+        <section id="movement">
+            <h2><span class="sec-num">06</span> Movimiento del cabezal</h2>
+            <p>TAPE dispone de cuatro operadores de movimiento:</p>
+
+            <table>
+                <thead>
+                    <tr><th>Operador</th><th>Movimiento</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>&lt;&lt;</code></td><td>Una celda a la izquierda.</td></tr>
+                    <tr><td><code>&gt;&gt;</code></td><td>Una celda a la derecha.</td></tr>
+                    <tr><td><code>^</code></td><td>Una fila hacia arriba.</td></tr>
+                    <tr><td><code>v</code></td><td>Una fila hacia abajo.</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Un movimiento por operador</h3>
+            <p>
+                El operador <code>&gt;&gt;</code> representa <strong>un solo paso</strong>.
+                No es un operador acumulativo.
+            </p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>WRITE(60);>>       // Mueve una posición a la derecha
+WRITE(60);>> >> >> // Desplaza tres posiciones
+WRITE(60);>>>>>>   // Forma compacta: seis '>' forman tres operadores '>>'</code></pre>
+            </div>
+
+            <div class="callout note">
+                <span class="callout-title">Regla mental</span>
+                <code>&gt;&gt;</code> es un token; <code>&gt;&gt;&gt;&gt;</code> son dos tokens;
+                <code>&gt;&gt;&gt;&gt;&gt;&gt;</code> son tres tokens.
+            </div>
+
+            <h3>Límites de la matriz</h3>
+            <p>
+                El cabezal no puede salir de la matriz (filas <code>A</code> a <code>D</code>,
+                columnas <code>0</code> a <code>34</code>). Los movimientos que intentan superar
+                estos límites generan un error de desbordamiento.
+            </p>
+        </section>
+
+        <section id="read">
+            <h2><span class="sec-num">07</span> READ: leer la celda actual</h2>
+            <p>
+                <code>READ()</code> devuelve el valor almacenado en la celda que actualmente
+                ocupa el cabezal.
+            </p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>WRITE(60)
+READ() // Devuelve 60
+
+// Combinado con EMIT y movimiento:
+EMIT(READ(), 8, 1);>></code></pre>
+            </div>
+
+            <p>La instrucción <code>EMIT(READ(), 8, 1);&gt;&gt;</code> sigue este orden:</p>
+            <ol>
+                <li>Leer el valor de la celda actual.</li>
+                <li>Utilizarlo como valor MIDI.</li>
+                <li>Emitirlo durante 8 ticks en el canal de emisión con ID <code>1</code>.</li>
+                <li>Mover el cabezal una posición a la derecha.</li>
+            </ol>
+        </section>
+
+        <section id="spawn">
+            <h2><span class="sec-num">08</span> Canales de emisión y SPAWN</h2>
+            <p>
+                Los canales de emisión de sonido son independientes del cabezal de
+                lectura/escritura. Para crear un canal se utiliza <code>SPAWN(id)</code>:
+            </p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>SPAWN(0)
+SPAWN(1)</code></pre>
+            </div>
+
+            <h3>Instrumentos</h3>
+            <p>
+                El ID determina el tipo de oscilador utilizado para producir el sonido.
+                La selección se realiza de forma cíclica mediante módulo 4:
+            </p>
+
+            <table>
+                <thead>
+                    <tr><th>ID mod 4</th><th>Oscilador</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>0</code></td><td>triangle</td></tr>
+                    <tr><td><code>1</code></td><td>sine</td></tr>
+                    <tr><td><code>2</code></td><td>square</td></tr>
+                    <tr><td><code>3</code></td><td>sawtooth</td></tr>
+                </tbody>
+            </table>
+
+            <div class="callout warning">
+                <span class="callout-title">No confundir</span>
+                <code>SPAWN</code> crea un canal de emisión; no crea ni mueve el cabezal
+                de lectura/escritura.
+            </div>
+
+            <h3>KILL</h3>
+            <p>
+                <code>KILL(id)</code> elimina un canal de emisión previamente creado,
+                dejándolo no disponible para futuras emisiones.
+            </p>
+        </section>
+
+        <section id="emit">
+            <h2><span class="sec-num">09</span> EMIT: producir sonido</h2>
+            <p class="signature">EMIT(valor, duracion, canal)</p>
+
+            <table>
+                <thead>
+                    <tr><th>Argumento</th><th>Significado</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>valor</code></td><td>Valor MIDI que se desea emitir (<code>0</code> para silencio).</td></tr>
+                    <tr><td><code>duracion</code></td><td>Duración expresada en ticks. Un tick corresponde a una fusa.</td></tr>
+                    <tr><td><code>canal</code></td><td>ID del canal de emisión creado con <code>SPAWN</code>.</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Ejemplo de una melodía</h3>
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>WRITE(60);>>
+WRITE(63);>>
+WRITE(67);>>
+WRITE(72)
+
+SPAWN(1)
+
+JUMP(1==1, #A, 0)
+EMIT(READ(), 8, 1);>>
+EMIT(READ(), 8, 1);>>
+EMIT(READ(), 8, 1);>>
+EMIT(READ(), 8, 1);>></code></pre>
+            </div>
+        </section>
+
+        <section id="jump">
+            <h2><span class="sec-num">10</span> JUMP y control de flujo</h2>
+            <p>
+                <code>JUMP</code> permite cambiar la posición del cabezal de
+                lectura/escritura cuando se cumple una condición.
+            </p>
+            <p class="signature">JUMP(condicion, #fila, columna)</p>
+
+            <div class="callout warning">
+                <span class="callout-title">Ojo con el símbolo #</span>
+                <code>#A</code> significa "fila A". En cambio, <code>A</code> sin
+                <code>#</code> es el nombre de una variable.
+            </div>
+
+            <h3>Salto incondicional y condiciones</h3>
+            <p>
+                Una expresión como <code>1 == 1</code> siempre es verdadera, lo que permite
+                posicionar el cabezal directamente en una coordenada conocida. Un <code>JUMP</code>
+                se ejecuta una sola vez y no constituye un bucle por sí mismo.
+            </p>
+
+            <table>
+                <thead>
+                    <tr><th>Operador</th><th>Significado</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>==</code></td><td>Igual a</td></tr>
+                    <tr><td><code>!=</code></td><td>Distinto de</td></tr>
+                    <tr><td><code>&lt;</code></td><td>Menor que</td></tr>
+                    <tr><td><code>&gt;</code></td><td>Mayor que</td></tr>
+                    <tr><td><code>&lt;=</code></td><td>Menor o igual que</td></tr>
+                    <tr><td><code>&gt;=</code></td><td>Mayor o igual que</td></tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>JUMP(1==1, #D, 0)         // Posiciona el cabezal en D,0
+JUMP(READ()==74, #A, 2)   // Salta a A,2 si la celda actual vale 74</code></pre>
+            </div>
+        </section>
+
+        <section id="variables">
+            <h2><span class="sec-num">11</span> Variables y asignaciones</h2>
+            <p>TAPE permite definir y actualizar variables mediante <code>=</code>:</p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>nota = 60
+duracion = 8
+WRITE(nota)
+
+A = 60
+JUMP(A == 60, #B, 4) // A es variable, #B es referencia a fila B</code></pre>
+            </div>
+
+            <div class="callout note">
+                <span class="callout-title">Nota</span>
+                Actualmente no existe una instrucción <code>RETURN</code> integrada.
+                Las funciones pueden recibir argumentos y ejecutar instrucciones, pero
+                no disponen de un mecanismo de retorno dedicado.
+            </div>
+        </section>
+
+        <section id="functions">
+            <h2><span class="sec-num">12</span> Funciones con DEFINE</h2>
+            <p>
+                Las funciones permiten encapsular secuencias de instrucciones y reutilizarlas.
+                Deben estar definidas <strong>antes de ser llamadas</strong>.
+            </p>
+            <p class="signature">DEFINE nombre(parametros) { ... }</p>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>// Función sin argumentos
+DEFINE ScaleOne() {
+    EMIT(READ(), 4, 1);v
+    EMIT(READ(), 4, 1);>>
+    EMIT(READ(), 4, 1);^
+    EMIT(READ(), 4, 1);>>
+}
+
+// Función con parámetros
+DEFINE PlayNote(note, duration, channel) {
+    WRITE(note)
+    EMIT(READ(), duration, channel)
+}
+
+ScaleOne()
+PlayNote(60, 8, 1)</code></pre>
+            </div>
+        </section>
+
+        <section id="complete">
+            <h2><span class="sec-num">13</span> Construir un programa completo</h2>
+            <ol>
+                <li>Preparar la cinta escribiendo valores con <code>WRITE</code>.</li>
+                <li>Crear los canales de sonido necesarios con <code>SPAWN</code>.</li>
+                <li>Colocar el cabezal en una posición conocida con <code>JUMP</code>.</li>
+                <li>Leer los valores con <code>READ()</code> y emitirlos con <code>EMIT</code>.</li>
+                <li>Mover el cabezal para recorrer otras posiciones.</li>
+                <li>Utilizar funciones para encapsular patrones complejos.</li>
+            </ol>
+
+            <div class="code-block">
+                <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>// Preparar una escala
+WRITE(60);>>
+WRITE(62);>>
+WRITE(64);>>
+WRITE(65);>>
+WRITE(67)
+
+// Crear canal de sonido
+SPAWN(1)
+
+// Colocar el cabezal al inicio
+JUMP(1==1, #A, 0)
+
+// Reproducir las cinco notas
+EMIT(READ(), 8, 1);>>
+EMIT(READ(), 8, 1);>>
+EMIT(READ(), 8, 1);>>
+EMIT(READ(), 8, 1);>>
+EMIT(READ(), 8, 1)</code></pre>
+            </div>
+        </section>
+
+        <section id="cancrizans">
+            <h2><span class="sec-num">14</span> Ejemplo real: Cancrizans</h2>
+            <p>
+                El siguiente fragmento procede del programa funcional
+                <strong>Cancrizans.tape</strong>, inspirado en el
+                <em>Canon Cancrizans</em> de J. S. Bach.
+            </p>
+
+            <div class="code-block">
+                <div class="code-header"><span>Cancrizans.tape</span><button class="copy-btn">Copiar</button></div>
+                <pre><code>DEFINE Bass() {
+    JUMP(1==1, #D, 0)
+    WRITE(48);>>
+    WRITE(51);>>
+    WRITE(55);>>
+    WRITE(56);>>
+    WRITE(47);>>>>
+
+    JUMP(1==1, #D, 0)
+    EMIT(READ(), 16, 0);>>
+    EMIT(READ(), 16, 0);>>
+    EMIT(READ(), 16, 0);>>
+    EMIT(READ(), 16, 0);>>
+    EMIT(READ(), 16, 0);>>
+    EMIT(READ(), 8, 0)
+    JUMP(1==1, #D, 2)
+    EMIT(READ(), 16, 0);>>
+}
+
+DEFINE ScaleOne() {
+    EMIT(READ(), 4, 1);v
+    EMIT(READ(), 4, 1);>>
+    EMIT(READ(), 4, 1);^
+    EMIT(READ(), 4, 1);>>
+    EMIT(READ(), 4, 1);<<
+    EMIT(READ(), 4, 1);v
+    EMIT(READ(), 4, 1);<<
+    EMIT(READ(), 4, 1);
+}</code></pre>
+            </div>
+
+            <h3>Claves del funcionamiento</h3>
+            <ul>
+                <li><strong>Lectura y movimiento encadenados:</strong> <code>EMIT(READ(), 4, 1);v</code> emite el valor actual y desplaza el cabezal una fila hacia abajo en la misma línea.</li>
+                <li><strong>Condiciones sobre la cinta:</strong> <code>JUMP(READ()==74, #A, 2)</code> utiliza el contenido de la memoria como lógica de control musical.</li>
+                <li><strong>Polifonía multipista:</strong> <code>SPAWN(1); SPAWN(0)</code> habilita dos timbres simultáneos ejecutando voces independientes.</li>
+            </ul>
+
+            <div class="callout success">
+                <span class="callout-title">La idea clave de Cancrizans</span>
+                TAPE no necesita representar una partitura tradicional directamente.
+                Puede representar la lógica espacial y temporal que genera la música.
+            </div>
+        </section>
+
+        <section id="errors">
+            <h2><span class="sec-num">15</span> Errores frecuentes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Error común</th>
+                        <th>Por qué ocurre y cómo evitarlo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Confundir <code>SPAWN(1)</code> con el cabezal</td>
+                        <td><code>SPAWN</code> solo crea un canal de audio; el cabezal de lectura/escritura siempre es único y se mueve con <code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>^</code>, <code>v</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>Olvidar mover tras <code>WRITE</code></td>
+                        <td>Dos <code>WRITE</code> seguidos sin movimiento sobrescriben la misma celda.</td>
+                    </tr>
+                    <tr>
+                        <td>Confundir <code>#A</code> con <code>A</code></td>
+                        <td><code>#A</code> referencia la fila A en <code>JUMP</code>; <code>A</code> sin numeral es una variable.</td>
+                    </tr>
+                    <tr>
+                        <td>Creer que <code>&gt;&gt;&gt;&gt;</code> mueve 4 celdas</td>
+                        <td>Cada <code>&gt;&gt;</code> es un paso; cuatro símbolos <code>&gt;</code> equivalen a 2 pasos.</td>
+                    </tr>
+                    <tr>
+                        <td>Salir de los límites</td>
+                        <td>Las filas válidas son <code>A</code>–<code>D</code> y las columnas <code>0</code>–<code>34</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>Emitir en canal no inicializado</td>
+                        <td>Siempre ejecuta <code>SPAWN(id)</code> antes de llamar a <code>EMIT(..., id)</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>Llamar funciones antes de definirlas</td>
+                        <td>Todo bloque <code>DEFINE</code> debe aparecer arriba de su invocación.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="reference">
+            <h2><span class="sec-num">16</span> Referencia rápida</h2>
+            <div class="grid">
+                <div class="card">
+                    <h4>Memoria</h4>
+                    <p>Matriz de <strong>4 filas</strong> (<code>A</code>–<code>D</code>) × <strong>35 columnas</strong> (<code>0</code>–<code>34</code>). <code>0</code> = silencio, <code>1–127</code> = MIDI.</p>
+                </div>
+                <div class="card">
+                    <h4>Osciladores (ID mod 4)</h4>
+                    <p><code>0</code>: triangle · <code>1</code>: sine · <code>2</code>: square · <code>3</code>: sawtooth.</p>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr><th>Sintaxis</th><th>Descripción</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>WRITE(valor)</code></td><td>Escribe un valor en la celda actual.</td></tr>
+                    <tr><td><code>READ()</code></td><td>Lee el valor de la celda actual.</td></tr>
+                    <tr><td><code>SPAWN(id)</code> / <code>KILL(id)</code></td><td>Crea o elimina un canal de emisión.</td></tr>
+                    <tr><td><code>EMIT(valor, ticks, canal)</code></td><td>Emite un evento sonoro (1 tick = 1 fusa).</td></tr>
+                    <tr><td><code>JUMP(condicion, #fila, col)</code></td><td>Salta a una posición si la condición es verdadera.</td></tr>
+                    <tr><td><code>DEFINE nombre(...) { ... }</code></td><td>Define una función reutilizable.</td></tr>
+                    <tr><td><code>&lt;&lt;</code> <code>&gt;&gt;</code> <code>^</code> <code>v</code></td><td>Mueve el cabezal 1 celda (izquierda, derecha, arriba, abajo).</td></tr>
+                    <tr><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>Operadores de comparación.</td></tr>
+                </tbody>
+            </table>
+
+            <div class="callout note">
+                <span class="callout-title">Resumen conceptual</span>
+                Escribe valores con <code>WRITE</code>, desplaza el cabezal con
+                <code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>^</code> y
+                <code>v</code>, lee mediante <code>READ</code>, crea canales con
+                <code>SPAWN</code>, produce sonido con <code>EMIT</code> y controla la
+                posición mediante <code>JUMP</code>.
+            </div>
+        </section>
+    </main>
+
+    <footer class="doc-footer">
+        <span>Tutorial del lenguaje TAPE DSL — Turing Audio Processing Engine.</span>
+        <a href="#top">Volver al inicio ↑</a>
+    </footer>
+</div>
+
+<!-- SCRIPT LIGERO PARA SCROLLSPY, COPIAR CÓDIGO Y MENÚ MÓVIL -->
+<script>
+    // 1. Toggle menú lateral en móviles
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menuToggle');
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+
+    // Cerrar sidebar en móvil al hacer clic en un enlace
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+        });
+    });
+
+    // 2. Botones de copiar código
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const code = btn.closest('.code-block').querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const original = btn.textContent;
+                btn.textContent = '¡Copiado!';
+                setTimeout(() => btn.textContent = original, 1500);
+            });
+        });
+    });
+
+    // 3. Resaltado activo en el menú lateral según el scroll (ScrollSpy)
+    const sections = document.querySelectorAll('main section');
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                });
+            }
+        });
+    }, { rootMargin: '-20% 0px -65% 0px' });
+
+    sections.forEach(sec => observer.observe(sec));
+</script>
+
+</body>
+</html>

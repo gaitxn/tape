@@ -491,10 +491,12 @@ JUMP(A == 60, #B, 4) // A es variable, #B es referencia a fila B</code></pre>
                 <div class="code-header"><span>tape</span><button class="copy-btn">Copiar</button></div>
                 <pre><code>// Función sin argumentos
 DEFINE ScaleOne() {
+    WRITE(64);v
+    WRITE(62);>>
+    WRITE(60)
+    EMIT(READ(), 4, 1);^ <<
     EMIT(READ(), 4, 1);v
-    EMIT(READ(), 4, 1);>>
-    EMIT(READ(), 4, 1);^
-    EMIT(READ(), 4, 1);>>
+    EMIT(READ(), 8, 1)
 }
 
 // Función con parámetros
@@ -503,8 +505,10 @@ DEFINE PlayNote(note, duration, channel) {
     EMIT(READ(), duration, channel)
 }
 
+SPAWN(1) // Necesario para emitir sonido
 ScaleOne()
-PlayNote(60, 8, 1)</code></pre>
+PlayNote(60, 8, 1)
+KILL(1) // Cierra el canal al finalizar</code></pre>
             </div>
         </section>
 
@@ -561,17 +565,16 @@ EMIT(READ(), 8, 1)</code></pre>
     WRITE(56);>>
     WRITE(47);>>>>
 
-    JUMP(1==1, #D, 0)
+    JUMP(1==1, #D, 0);
     EMIT(READ(), 16, 0);>>
     EMIT(READ(), 16, 0);>>
     EMIT(READ(), 16, 0);>>
     EMIT(READ(), 16, 0);>>
     EMIT(READ(), 16, 0);>>
-    EMIT(READ(), 8, 0)
+    EMIT(READ(), 8, 0);
     JUMP(1==1, #D, 2)
     EMIT(READ(), 16, 0);>>
 }
-
 DEFINE ScaleOne() {
     EMIT(READ(), 4, 1);v
     EMIT(READ(), 4, 1);>>
@@ -581,7 +584,40 @@ DEFINE ScaleOne() {
     EMIT(READ(), 4, 1);v
     EMIT(READ(), 4, 1);<<
     EMIT(READ(), 4, 1);
-}</code></pre>
+}
+DEFINE ScaleTwo() {
+    EMIT(READ(), 4, 1);
+    JUMP(READ()==74, #A, 2);
+    EMIT(READ(), 4, 1);
+    JUMP(READ()==67, #C, 1);
+    EMIT(READ(), 4, 1);>> ^;
+    EMIT(READ(), 4, 1);<<
+    EMIT(READ(), 4, 1);v
+    EMIT(READ(), 4, 1);<<
+    EMIT(READ(), 4, 1);^
+    EMIT(READ(), 4, 1);
+}
+
+WRITE(60);>>
+WRITE(63);>>
+WRITE(67);>>
+WRITE(72);v
+
+JUMP(1==1, #B, 0);
+WRITE(71);v WRITE(72)>>
+WRITE(74);^ WRITE(75)>>
+WRITE(77);
+SPAWN(1); SPAWN(0);
+JUMP(1==1, #A, 0)
+EMIT(READ(), 8, 1);>>    
+EMIT(READ(), 8, 1);>>   
+EMIT(READ(), 8, 1);>>    
+EMIT(READ(), 8, 1);>>    
+Bass();
+JUMP(1==1, #B, 0);
+ScaleOne();>>
+ScaleTwo();
+KILL(1); KILL(0);</code></pre>
             </div>
 
             <h3>Claves del funcionamiento</h3>
@@ -681,7 +717,7 @@ DEFINE ScaleOne() {
     </main>
 
     <footer class="doc-footer">
-        <span>Tutorial del lenguaje TAPE DSL — Turing Audio Processing Engine.</span>
+        <span>Tutorial del lenguaje TAPE DSL — Turing Audio Processing Engine · Licencia CC BY-SA 4.0.</span>
         <a href="#top">Volver al inicio ↑</a>
     </footer>
 </div>
@@ -731,6 +767,5 @@ DEFINE ScaleOne() {
 
     sections.forEach(sec => observer.observe(sec));
 </script>
-
 </body>
 </html>

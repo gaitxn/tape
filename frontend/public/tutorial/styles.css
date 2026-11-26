@@ -472,13 +472,19 @@ th {
 
 /* Navegación inferior entre secciones */
 .doc-footer {
+    order: 2;
     max-width: 920px;
-    padding: 0 3rem 3.5rem;
+    width: 100%;
+    margin-top: auto;
+    padding: 1.5rem 3rem 3.5rem;
+    border-top: 1px solid var(--border);
     color: var(--muted);
     font-size: 0.9rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
 }
 
 .doc-footer a {

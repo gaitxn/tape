@@ -10,10 +10,10 @@ export class ParserController {
 
   @Post('parse')
   parseOnly(@Body() body: { tokens?: Token[] }) {
-    console.log('Cuerpo recibido en /parser/parse:', body);
+    // console.log('Cuerpo recibido en /parser/parse:', body);
     const tokens = body?.tokens ?? [];
     const ast = this.parserService.parse(tokens);
-    console.log('Estructura AST: ', ast)
+    // console.log('Estructura AST: ', ast)
     return { ast };
   }
 }

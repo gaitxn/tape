@@ -15,15 +15,15 @@ export class LexerController {
   tokenize(@Body() body: { code?: string }) {
     const code = body?.code ?? '';
 
-    this.logger.log('──────── Código recibido ────────');
-    code.split('\n').forEach((instruction, i) => {
+    // this.logger.log('──────── Código recibido ────────');
+    /* code.split('\n').forEach((instruction, i) => {
       this.logger.log(`Línea ${i + 1}: ${instruction}`);
-    });
+    }); */
 
     const tokens = this.lexerService.tokenize(code);
 
-    this.logger.log(`Tokens generados (${tokens.length}):`);
-    console.table(tokens);
+    // this.logger.log(`Tokens generados (${tokens.length}):`);
+    // console.table(tokens);
 
     return { lines: code.split('\n').length, tokens };
   }

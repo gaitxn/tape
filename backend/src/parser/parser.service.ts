@@ -7,6 +7,15 @@ export class ParserService {
   private tokens: Token[] = [];
   private current = 0;
 
+  private static readonly OPERATORS = new Set<TokenType>([
+    TokenType.DOUBLE_EQUAL,
+    TokenType.NOT_EQUAL,
+    TokenType.LESS_EQUAL,
+    TokenType.GREATER_EQUAL,
+    TokenType.LESS_THAN,
+    TokenType.GREATER_THAN,
+  ]);
+
   public parse(tokens: Token[]): AST {
     this.tokens = tokens.filter((t) => t.type !== TokenType.COMMENT);
     this.current = 0;
@@ -43,7 +52,6 @@ export class ParserService {
     };
 
     if (this.isAtEnd()) {
-      console.log(token);
       this.advance();
       return node;
     }
@@ -58,7 +66,7 @@ export class ParserService {
 
     // En parser.service.ts
     if ([TokenType.UP, TokenType.DOWN, TokenType.SHIFT_LEFT, TokenType.SHIFT_RIGHT].includes(token.type)) {
-      console.log('Movimiento detectado en Parser:', token);
+      // console.log('Movimiento detectado en Parser:', token);
       this.advance();
       
       const directionMap: Record<string, '<<' | '>>' | '^' | 'v'> = {
@@ -302,16 +310,7 @@ export class ParserService {
     
     // 2. Obtener el token del operador
     let token = this.peek();   
-    const operators: TokenType[] = [
-      TokenType.DOUBLE_EQUAL, 
-      TokenType.NOT_EQUAL,
-      TokenType.LESS_EQUAL, 
-      TokenType.GREATER_EQUAL,
-      TokenType.LESS_THAN, 
-      TokenType.GREATER_THAN
-    ];
-    
-    if (!operators.includes(token.type)) {
+    if (!ParserService.OPERATORS.has(token.type)) {
       throw new BadRequestException(`Se esperaba un operador lógico en la línea ${token.line}`);
     }
     

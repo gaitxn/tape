@@ -15,9 +15,10 @@ export interface AudioEvent {
 
 export interface TapeHistory {
   step: number;
-  tapeIndex: number[][];   // Ficha/Pista activa (ej. 'A')
-  headPosition: number[];         // Posición actual del cabezal
-  symbols: (string | number)[]; // Estado de las celdas de esa cinta en este paso
+  headPosition: [number, number];
+  symbols: number[];
+  tapeIndex: [number, number][];
+  changes?: Array<[number, number, string | number]>;
 }
 
 export interface AudioMatrixDTO {

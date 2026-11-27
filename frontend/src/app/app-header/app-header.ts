@@ -1,4 +1,5 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { finalize } from 'rxjs';
 import { CompilerApi } from '../services/compiler.service';
 import { AudioEngineApi } from '../services/audio-engine.service';
 
@@ -12,6 +13,8 @@ import { AudioEngineApi } from '../services/audio-engine.service';
 export class AppHeader {
   private compilerApi = inject(CompilerApi);
   public readonly audioEngine = inject(AudioEngineApi);
+  
+  compileTimeMs = signal<number | null>(null);
 
   activeTab: string = 'edit';
   codeContent: string = '';
@@ -28,11 +31,20 @@ export class AppHeader {
     this.isCompiling = true;
     this.errorMessage = null;
     this.audioEngine.stop();
+    
+    const startTime = performance.now();
+    this.compileTimeMs.set(null);
 
     this.codeContent = this.compilerApi.code;
     console.log('Iniciando compilación completa (Lexer + Parser + Turing Engine)...');
 
-    this.compilerApi.compileFull(this.codeContent, { bpm: this.audioEngine.bpm() }).subscribe({
+    this.compilerApi.compileFull(this.codeContent, { bpm: this.audioEngine.bpm() })
+    .pipe(
+        finalize(() => {
+          const elapsed = performance.now() - startTime;
+          this.compileTimeMs.set(Math.round(elapsed));
+        })
+    ).subscribe({
       next: (response) => {
         console.log('Tokens generados: ', this.compilerApi.tokens);
         console.log('AST generado:', this.compilerApi.ast);
@@ -70,5 +82,60 @@ export class AppHeader {
     if (!Number.isNaN(value) && value > 0) {
       this.audioEngine.setBpm(value);
     }
+  }
+
+  async onFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const content = await file.text();
+    this.compilerApi.code = content;
+    this.compilerApi.loadedCode.set(content);
+    input.value = '';
+  }
+
+  isExporting = signal(false);
+
+  async exportWav(): Promise<void> {
+    if (this.isExporting()) return;
+
+    const events = this.audioEngine.getEvents();
+    console.log('[Export] eventos disponibles:', events?.length ?? 0);
+
+    if (!events || events.length === 0) {
+      console.warn('[Export] No hay eventos cargados para exportar.');
+      return;
+    }
+
+    this.isExporting.set(true);
+    try {
+      const bpm = this.audioEngine.bpm();
+      console.log('[Export] Renderizando WAV con BPM:', bpm);
+      const wavBlob = await this.audioEngine.renderEventsToWav(events, bpm);
+      const renderStart = performance.now();
+      console.log(
+        '[Export] Renderizado WAV en:',
+        Math.round(performance.now() - renderStart),
+        'ms | Tamaño:',
+        (wavBlob.size / (1024 * 1024)).toFixed(2),
+        'MB'
+      );
+      this.downloadBlob(wavBlob, 'tape-composition.wav');
+      console.log('[Export] WAV descargado, bytes:', wavBlob.size);
+    } catch (err) {
+      console.error('[Export] Error al generar o descargar WAV:', err);
+    } finally {
+      this.isExporting.set(false);
+    }
+  }
+
+  private downloadBlob(blob: Blob, filename: string): void {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }

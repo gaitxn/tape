@@ -175,3 +175,12 @@ nav {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.compile-timer{
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  user-select: none;
+  cursor: pointer;
+}

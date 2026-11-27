@@ -63,7 +63,7 @@ ng serve
 
 ## Equipo de Desarrollo
 Proyecto desarrollado por: 
-* Daniel Gaitán (@gaitxn)
-* Daniel Vásquez (@ST4LK3RDE21)
-* Andrés Gutiérrez (@AndresGbq)
-* Alejandro Velásquez (@Jhank-1)
+* Daniel Gaitán ([@gaitxn](https://github.com/gaitxn))
+* Daniel Vásquez ([@ST4LK3RDE21](https://github.com/ST4LK3RDE21))
+* Andrés Gutiérrez ([@AndresGbq](https://github.com/AndresGbq))
+* Alejandro Velásquez ([@Jhank-1](https://github.com/Jhank-1))

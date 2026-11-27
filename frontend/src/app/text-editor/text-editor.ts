@@ -4,6 +4,7 @@ import {
   ViewChild,
   AfterViewInit,
   inject,
+  effect,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -20,6 +21,19 @@ import { CompilerApi } from '../services/compiler.service';
 })
 export class TextEditor implements AfterViewInit {
   private api = inject(CompilerApi);
+
+  constructor() {
+    effect(() => {
+      const externalCode = this.api.loadedCode();
+      if (externalCode !== null && externalCode !== this.codeContent) {
+        queueMicrotask(() => {
+          this.codeContent = externalCode;
+          this.lines = this.codeContent.split('\n');
+          this.api.code = this.codeContent;
+        });
+      }
+    });
+  }
 
   codeContent: string = `WRITE(5); >>;
 SPAWN(1);
@@ -40,6 +54,11 @@ KILL(1);
   @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
   ngAfterViewInit() {
+    this.updateLines();
+  }
+
+  public setCode(content: string): void {
+    this.codeContent = content;
     this.updateLines();
   }
 

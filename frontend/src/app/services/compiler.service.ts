@@ -1,5 +1,5 @@
 // frontend/src/app/viewer/compiler.service.ts
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, switchMap, tap } from 'rxjs';
 import { Token } from '../interfaces/token.interface';
@@ -13,6 +13,7 @@ export class CompilerApi {
   private baseUrl = import.meta.env.NG_APP_PUBLIC_API_URL || 'http://localhost:3000';
 
   code: string = '';
+  public readonly loadedCode = signal<string | null>(null);
   tokens: Token[] = [];
   ast?: AST;
 

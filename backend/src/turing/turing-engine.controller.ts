@@ -17,11 +17,11 @@ export class TuringController {
       throw new BadRequestException('No se proporcionó un Árbol de Sintaxis Abstracta (AST) válido para ejecutar.');
     }
 
-    this.logger.log('──────── Ejecutando AST en Turing Engine ────────');
+    // this.logger.log('──────── Ejecutando AST en Turing Engine ────────');
     
     const result = this.turingService.execute(body.ast, body.metadata);
 
-    this.logger.log(`Ejecución finalizada: ${result.audioMatrix.length} eventos de audio generados.`);
+    // this.logger.log(`Ejecución finalizada: ${result.audioMatrix.length} eventos de audio generados.`);
 
     return result;
   }
